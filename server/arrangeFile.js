@@ -2,8 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const { spawn, spawnSync } = require("child_process");
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
-const ffprobePath = require("@ffprobe-installer/ffprobe").path;
+const ffmpeg = require('fluent-ffmpeg');
 
 // ==================== BIẾN TOÀN CỤC ====================
 let arranging = false;
