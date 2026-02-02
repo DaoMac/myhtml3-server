@@ -219,6 +219,10 @@ app.get('/timfile', checkArranging, (req, res) => {
 });
 
 // ==================== START ====================
-app.listen(PORT1, '0.0.0.0', () => {
-  console.log(`✅ Server chạy tại http://localhost:${PORT1}`);
+const server = app.listen(3000, '0.0.0.0', () => {
+  console.log('✅ Server chạy tại http://0.0.0.0:3000');
 });
+
+server.keepAliveTimeout = 120000;
+server.headersTimeout = 120000;
+
