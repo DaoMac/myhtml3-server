@@ -1,0 +1,102 @@
+/* Reset cơ bản */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Video full màn hình */
+video#loginAnimation,
+video#waitVideo1,
+video#waitVideo2,
+video#clickedVideo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Khi video hiện */
+video#loginAnimation.show {  z-index:3; }
+video#waitVideo1.show { z-index:2; }
+video#waitVideo2.show { z-index:2; }
+video#clickedVideo.show { z-index:4; }
+
+/* Overlay Yes/No ở giữa */
+#audioPrompt {
+  position: absolute;
+  top:50%;  left:50%;  transform: translate(-50%, -50%);
+  background: rgba(44, 43, 43, 0.7);
+  color: white;  padding: 20px 40px;  text-align: center;
+  font-size: 1.5em;  border-radius: 10px;
+  z-index: 20;  display: none;  flex-direction: column;
+  align-items: center;  justify-content: center;
+}
+
+/* Nút Yes/No */
+#audioPrompt button {
+  margin: 10px;  padding: 15px 30px;
+  font-size: 1.2em;  border: none;
+  border-radius: 8px;  cursor: pointer;
+  background: #1e90ff;  color: white;
+  transition: background 0.3s;
+}
+
+#audioPrompt button:hover {
+  background: #63b3ff;
+}
+
+/* Div click toàn màn hình, center */
+#clickContainer {
+  position: absolute;  top:40%;  left:65%;
+  transform: translate(-50%, -50%);
+  width: 30%;  height: 30%;
+  display: none;  justify-content: center;
+  align-items: center;  cursor: pointer;
+  z-index: 15;  background: rgba(0,0,0,0); /* trong suốt */
+  border-radius: 50%;       /* chỉ hiển thị tròn */
+  clip-path: circle(50% at 50% 50%); /* vùng click thật sự là hình tròn */
+}
+
+#loading-box {
+  position: fixed;
+  display: flex;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 9999;
+  justify-content: center;
+  font-size:x-large;
+  font-family: sans-serif;
+  color: white;
+  align-items: center;
+  background-color: rgba(0,0,0,0.7);
+  gap: 20px;
+
+}
+
+.loading  {
+  justify-content: center;
+  display: inline-block;
+  animation: xoay 2s linear infinite;
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border-color: white;
+  border: 8px dashed white ;
+}
+
+@keyframes xoay {
+  0% {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
+}

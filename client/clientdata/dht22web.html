@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESP8266 • DHT22</title>
+  <style>
+    :root {
+      --bg: #0f1720;
+      --card: #0b1220;
+      --accent: #00c2ff;
+      --muted: #9aa8b2;
+    }
+    body {
+    margin: 0;
+    font-family: Inter, Segoe UI, Roboto, Arial;
+    font-weight: 800;
+    background: linear-gradient(180deg, #121a28 0%, #1a2438 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    }
+
+    video#bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .wrap {
+      width: 340px;
+      padding: 24px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 8px 0;
+      color: var(--accent);
+    }
+
+    h2 {
+      font-size: 14px;
+      margin: 0 0 8px 0;
+      color: #9cc2ff;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .card {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      text-align: center;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .unit {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 6px;
+    }
+
+    .status {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .dot.ok {
+      background: #3ee6a4;
+      box-shadow: 0 0 12px rgba(62, 230, 164, 0.25);
+    }
+
+    .dot.err {
+      background: #ff6b6b;
+      box-shadow: 0 0 12px rgba(255, 107, 107, 0.18);
+    }
+
+    .small {
+    font-size: 13px;
+    font-weight: 600;
+    background: linear-gradient(270deg, #ff00cc, #3333ff, #00ffcc, #ffcc00, #ff00cc);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowText 6s ease infinite;
+    }
+
+    @keyframes rainbowText {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+    }
+
+    .refresh {
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    footer {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+    .cards, #nutRefresh{
+      transition: cubic-bezier(0.215, 0.610, 0.355, 1);
+      border-radius: 15px;
+    }
+    #nutRefresh:hover{    /* hover effect, hover:lơ lửng , hiệu ứng khi đặt chuột vào */
+      transform: scale(1.1);
+      background-color: #37538b;
+    } 
+    #btnRefresh:active{   /* active effect, hiệu ứng khi nhấn nút */
+      transform: scale(0.9);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Video Background -->
+  <video id="bgVideo" autoplay muted loop playsinline></video>
+
+  <div class="wrap">
+    <h1>ESP8266 • DHT22</h1>
+    <h2>Powered by DJI-1080</h2>
+    <div class="meta">Cập nhật tự động; cảm biến đọc mỗi 60 giây</div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="small">Nhiệt độ</div>
+        <div id="temp" class="value">--<span class="unit">°C</span></div>
+      </div>
+      <div class="card">
+        <div class="small">Độ ẩm</div>
+        <div id="hum" class="value">--<span class="unit">%</span></div>
+      </div>
+    </div>
+
+    <div class="status">
+      <div>
+        <span id="statusDot" class="dot err"></span>
+        <span id="statusText">Chưa kết nối</span>
+      </div>
+      <div id="nutRefresh">
+        <button id="btnRefresh" class="refresh">Refresh</button>
+      </div>
+    </div>
+
+    <footer>Endpoint JSON: <code>/json-esp8266</code> • Cập nhật mỗi 60 giây</footer>
+  </div>
+
+  <script>
+    const tempEl = document.getElementById('temp');
+    const humEl  = document.getElementById('hum');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const btn = document.getElementById('btnRefresh');
+    const bgVideo = document.getElementById('bgVideo');
+
+    function updateBackgroundVideo(temp, hum) {
+      let src = '';
+
+      if (temp >= 30) {
+        src = 'https://cdn.pixabay.com/video/2023/02/13/150539-798555683_tiny.mp4';
+      } else if (temp <= 15) {
+        src = 'https://cdn.pixabay.com/video/2015/12/19/1701-149530484_tiny.mp4';
+      } else if (hum >= 80) {
+        src = 'https://cdn.pixabay.com/video/2023/02/21/151629-801075780_tiny.mp4';
+      } else {
+        src = 'https://cdn.pixabay.com/video/2025/02/23/260397_tiny.mp4';
+      }
+
+      if (!bgVideo.src.includes(src)) {
+        bgVideo.src = src;
+      }
+    }
+
+    async function fetchData() {
+      try {
+        const res = await fetch('/json-esp8266', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const j = await res.json();
+
+        const temp = Number(j.duLieu.nhietdo);
+        const hum = Number(j.duLieu.doam);
+
+        tempEl.innerHTML = temp.toFixed(1) + '<span class="unit">°C</span>';
+        humEl.innerHTML  = hum.toFixed(1) + '<span class="unit">%</span>';
+
+        statusDot.classList.remove('err');
+        statusDot.classList.add('ok');
+        statusText.textContent = 'Trạng thái bộ đo • ' + j.trangthai + ' • ' + j.thoigian;
+
+        tempEl.classList.add('pulse');
+        humEl.classList.add('pulse');
+        setTimeout(() => {
+          tempEl.classList.remove('pulse');
+          humEl.classList.remove('pulse');
+        }, 700);
+
+        updateBackgroundVideo(temp, hum);
+
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    fetchData();
+    setInterval(fetchData, 60000);
+
+    btn.addEventListener('click', fetchData);
+  </script>
+</body>
+</html>

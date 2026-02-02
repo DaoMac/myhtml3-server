@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My mainpage</title> 
+  <link rel="stylesheet" href="mainpage.css">
+  <script src="mainpage.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="scriptB.js" defer></script>
+  <link rel="icon" href="clientdata/a simple, modern mus (1).ico" type="image/x-icon">
+</head>
+<body>
+  
+  <canvas id="canvasnen"></canvas>
+
+  <img id="anhnen" src="clientdata/Listphotos/nenxanh.jpg"  type="jpg">
+  
+  <div class="container"  id="container-1">
+    Chưa set 
+  </div>
+
+   <div class="container" id="container-2">
+    <div id="cover-form">
+      <h2>Tìm lại file đã upload</h2>
+      <span>
+        <input id="ae2" type="text" placeholder="vd:(.mp3)"/>
+        <button id="nut2">tìm kiếm</button>
+      </span>
+      <h3>📁 kết quả các file cần tìm:</h3>
+      <div id="fileList" class="scroll-box">chưa có gì</div>
+      <button class="nutdownload">Tải về</button>
+    </div> 
+    <div class="upload-box">
+      <form id="uploadForm" enctype="multipart/form-data">
+          <input type="file" id="fileInput" name="file" hidden>
+          <label for="fileInput" class="upload-label">
+            📂 Chọn file
+          </label>
+          <span id="fileName">Chưa chọn file</span>
+          <button type="submit" class="upload-btn">⬆ Upload</button>
+      </form>
+      <div id="uploadStatus"></div>
+    </div>
+    </div>
+
+    <div class="container" id="container-3">
+        <div id="cover-video">
+        <video id="short-video" controls muted autoplay loop playsinline>
+            <source src="" type="video/mp4">
+        </video>
+        </div>
+   </div> 
+
+    <div class="container" id="container-4">
+        <div id="audio-player">
+        <video id="video-audio" autoplay muted loop playsinline>
+        <source src="clientdata/ListVideo/colombina.mp4" type="video/mp4">
+        </video>
+        <div>
+        <div id="chucnangUI">  
+        <box id="tenbai">
+        <div id="tenbai-text"></div>
+        </box>
+        <input type="range" id="thanhtgianmp3" value="0" min="0" max="100">
+        <div id="time-display">
+        <span id="real-timemp3">00:00</span>/<span id="full-timemp3">00:00</span>
+        </div>
+        <span>
+        <button id="playBtn1" class="btn-toggle">🔂</button>
+        <button id="playBtn2">⏮️</button>
+        <button id="playBtn3">▶️</button>
+        <button id="playBtn4">⏭️</button>
+        <button id="playBtn5" class="btn-toggle">🔀</button>
+        </span>
+        </div>
+        </div>
+        </div> 
+   </div>
+
+   <div class="container" id="container-5">
+    
+   </div> 
+
+   <nav id="dieuhuong">
+    <ul>
+      <div class="nav-indicator"></div>
+        <li>Trang chủ</li>
+        <li>File</li>
+        <li>Short</li>
+        <li>Music</li>
+        <li>Profile</li>
+    </ul>
+   </nav>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Đã mở server cổng 3000 mạng Binhnuoc
+Lỗi ip
+Đã cải tiến

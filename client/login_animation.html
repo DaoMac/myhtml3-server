@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOGIN</title>
+<script src="login_animation.js" defer></script>
+<link rel="stylesheet" href="login_animation.css">
+<link rel="icon" href="clientdata/a simple, modern mus (1).ico" type="image/x-icon">
+</head>
+<body>
+
+<div id="loading-box">
+  <div class="loading"></div>
+  <p>Đang tải tài nguyên</p>
+</div>
+
+<!-- Hộp thoại hỏi ý kiến -->
+<div id="audioPrompt">
+  <p>Yêu cầu chấp nhận âm thanh để tiếp tục</p>
+  <button id="yesBtn">Có</button>
+</div>
+
+<!-- Video login -->
+<video id="loginAnimation"  muted playsinline>
+  <source src="clientdata/ListVideo/loginvideo.mp4" type="video/mp4">
+</video>
+
+<!-- Video chờ click (loop) preload, ẩn sẵn -->
+<video id="waitVideo1"  muted playsinline>
+  <source src="clientdata/ListVideo/waittotap.mp4" type="video/mp4">
+</video>
+
+<video id="waitVideo2"  muted playsinline>
+  <source src="clientdata/ListVideo/waittotap.mp4" type="video/mp4">
+</video>
+
+<!-- Video clicked preload -->
+<video id="clickedVideo"  muted playsinline>
+  <source src="clientdata/ListVideo/clicked.mp4" type="video/mp4">
+</video>
+
+<audio id="waittotapAudio" >
+  <source src="clientdata/ListAudio/waittotap100.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="waittotapAudio1" >
+  <source src="clientdata/ListAudio/waittotap100.mp3" type="audio/mpeg">
+</audio>
+
+<div id="clickContainer"></div>
+</body>
+</html>
