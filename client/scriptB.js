@@ -121,15 +121,54 @@ downloadBtn?.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
-async function tailenfile(){
-    const res = await fetch('/guifile',{
-        method: POST,
-        body: FormData
-    });
-    
-    
+const uploadForm  = document.getElementById('uploadForm');
+const fileInput  = document.getElementById('fileInput');
+const fileName   = document.getElementById('fileName');
+const uploadStat = document.getElementById('uploadStatus');
 
-}
+// tải lên files
+fileInput.addEventListener('change', () => {
+    if (!fileInput.files.length) {
+        fileName.textContent = 'Chưa chọn file';
+        return;
+    }
+    fileName.textContent =
+        [...fileInput.files].map(f => f.name).join(', ');
+});
+
+uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!fileInput.files.length) {
+        uploadStat.textContent = '❌ Chưa chọn file';
+        return;
+    }
+
+    const fd = new FormData();
+
+    for (const f of fileInput.files) {
+        fd.append('myfile', f);
+    }
+
+    uploadStat.textContent = '⏳ Đang upload...';
+
+    try {
+        const res = await fetch('/guifile', {
+            method: 'POST',
+            body: fd
+        });
+
+        const data = await res.json();
+
+        uploadStat.textContent =
+            `✔ Lưu: ${data.saved.length} | ❌ Loại: ${data.invalid.length}`;
+
+    } catch (err) {
+        uploadStat.textContent = '❌ Upload lỗi';
+        console.error(err);
+    }
+});
+
 
 /* ==========================================================
    4. VẬN HÀNH (Initialization)

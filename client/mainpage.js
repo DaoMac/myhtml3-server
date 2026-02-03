@@ -52,10 +52,11 @@ limenu.forEach((d, i) => {
     });
 });
 
+
 const canvas = document.getElementById('canvasnen');
 const pen = canvas.getContext('2d');
 const petal = new Image();
-petal.src = 'clientdata/Listphotos/longchim.png';
+petal.src = 'clientdata/ListPhotos/longchim.png';
 
 function resizeCanvas() {
     // Cập nhật kích thước thực tế của các điểm ảnh trong canvas
@@ -92,7 +93,7 @@ function ve(gocxoay, p1, p2, p3){
 
 const limitHeight = 350; 
 const sizeMin = 15;      
-const sizeMax = 55;      
+const sizeMax = 35;      
 
 function createPetal() {
     const side = Math.random() < 0.5 ? 'top' : 'bottom';
@@ -123,13 +124,13 @@ function createPetal() {
         speedT: Math.random() * 0.0006 + 0.0004, 
         size: sizeMin,
         w: Math.random() * Math.PI * 2,
-        speedW: (Math.random() - 0.5) * 0.02    //lấy từ -0.5 tới 0.5
+        speedW: (Math.random() - 0.5) * 0.02    //lấy từ -0.5 tới 0.5 để quay ngược hoặc xuôi
     };
 }
 
 // Khởi tạo mảng ban đầu
 let petals = [];
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 40; i++) {
     petals.push(createPetal());
     // Cho t chạy ngẫu nhiên để hoa không bay cùng lúc lúc mới load trang
     petals[i].t = Math.random(); 
@@ -141,22 +142,19 @@ function animate() {
     petals.forEach(p => {
         p.t += p.speedT;
 
-        // --- TÍNH KÍCH THƯỚC: TO DẦN RỒI NHỎ DẦN ---
-        if (p.t < 0.5) {
-            // Nửa đầu hành trình (0 -> 0.5)    từ 0.2 lên 0.8
-            let tiLe = p.t * 2; 
-            p.size = sizeMin + (sizeMax - sizeMin) * tiLe;
-        } 
-        else {
-            // Nửa sau hành trình (0.5 -> 1)    từ 0.8 về 0.2
-            let tiLe = 1 - ((p.t - 0.5) * 2);
-            p.size = sizeMin + (sizeMax - sizeMin) * tiLe;
-        }
+        // --- TÍNH KÍCH THƯỚC: CO GIÃN VÔ HẠN (SỬ DỤNG SIN) ---
+        // p.w là góc xoay, nó tăng liên tục nên dùng nó để tạo nhịp co giãn rất tiện
+        // Math.sin trả về giá trị từ -1 đến 1. 
+        // Ta đưa nó về hệ số từ 0 đến 1 bằng cách: (Math.sin(p.w) + 1) / 2
+        let nhipCoGian = (Math.sin(p.w) + 1) / 2; 
+
+        // Kích thước sẽ biến thiên liên tục giữa sizeMin và sizeMax
+        p.size = sizeMin + (sizeMax - sizeMin) * nhipCoGian;
 
         // --- TÍNH VỊ TRÍ ---
         // Để không nối đuôi, X xuất phát từ vị trí âm riêng biệt của mỗi hoa
         // Khi t tăng, hoa sẽ trôi dần sang phải
-        p.x += (p.speedT * canvas.width * 2.1); 
+        p.x += (p.speedT * canvas.width * 1.2); 
         
         // Quỹ đạo né cột (Bezier) < chỉ có 1 đường bezier trong cả hành trình từ t=0(đầu trang) tới t=1(cuối trang)>
         p.y = bezierY(p.y0, p.y1, p.y2, p.t);
@@ -167,7 +165,7 @@ function animate() {
 
         // Reset khi hoa đã bay khuất màn hình bên phải (p.x > canvas.width)
         // hoặc hành trình t kết thúc
-        if (p.t > 1 || p.x > canvas.width) {
+        if (p.x > canvas.width) {
             const fresh = createPetal();
             // Khi reset, cho x nằm xa lề trái để chờ đến lượt bay vào
             fresh.x = -Math.random() * 200 - 50; // từ sấp sỉ -200 tới -50
@@ -179,8 +177,6 @@ function animate() {
 }
 
 animate();
-
-
 
 function containermacdinh(limacdinh, chisovitri){
     limacdinh.classList.add('active');  //thêm active cho li đc chọn
