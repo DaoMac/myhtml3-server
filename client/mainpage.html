@@ -8,6 +8,7 @@
   <script src="mainpage.js" defer></script>
   <script src="script.js" defer></script>
   <script src="scriptB.js" defer></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <link rel="icon" href="clientdata/a simple, modern mus (1).ico" type="image/x-icon">
 </head>
 <body>
@@ -17,7 +18,7 @@
   <img id="anhnen" src="clientdata/Listphotos/nenxanh.jpg"  type="jpg">
   
   <div class="container"  id="container-1">
-    Chưa set 
+    <h1>Chưa trang bị gì ở đây </h1>
   </div>
 
    <div class="container" id="container-2">
@@ -82,15 +83,22 @@
     
    </div> 
 
-   <nav id="dieuhuong">
-    <ul>
-      <div class="nav-indicator"></div>
-        <li>Trang chủ</li>
-        <li>File</li>
-        <li>Short</li>
-        <li>Music</li>
-        <li>Profile</li>
-    </ul>
-   </nav>
+<nav id="dieuhuong">
+  <ul>
+    <div class="nav-indicator"></div>
+    <li data-index="0"><i data-lucide="home"></i> <span>Trang chủ</span></li>
+    <li data-index="1"><i data-lucide="folder-open"></i> <span>File</span></li>
+    <li data-index="2"><i data-lucide="clapperboard"></i> <span>Short</span></li>
+    <li data-index="3"><i data-lucide="music"></i> <span>Music</span></li>
+    <li data-index="4"><i data-lucide="user"></i> <span>Profile</span></li>
+  </ul>
+</nav>
+<script>
+  // Khởi tạo icon ngay khi trình duyệt đã tải xong thư viện và tất cả content đã có
+  document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+  });
+</script>
+
 </body>
 </html>

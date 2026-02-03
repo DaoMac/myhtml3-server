@@ -6,6 +6,16 @@ for(let i = 0; i < limenu.length; i++){
     container.push(document.getElementById(`container-${i+1}`));
 }
 
+// lấy li base
+function containermacdinh(limacdinh, chisovitri){
+    limacdinh.classList.add('active');  //thêm active cho li đc chọn
+    updateIndicator(limacdinh);     // di chuyển nav-indicator đến đó
+
+    container[chisovitri].style.display = 'flex';
+    container[chisovitri].classList.add('active-slide');
+}
+containermacdinh(limenu[2], 2); 
+
 // Hàm để cập nhật vị trí con trượt
 function updateIndicator(element) {
     if (!element || !indicator) return;
@@ -51,6 +61,12 @@ limenu.forEach((d, i) => {
         });
     });
 });
+
+window.addEventListener('resize', () => {
+    const activatedResize = document.querySelector('#dieuhuong ul li.active');
+    updateIndicator(activatedResize);
+});
+
 
 
 const canvas = document.getElementById('canvasnen');
@@ -177,12 +193,3 @@ function animate() {
 }
 
 animate();
-
-function containermacdinh(limacdinh, chisovitri){
-    limacdinh.classList.add('active');  //thêm active cho li đc chọn
-    updateIndicator(limacdinh);     // di chuyển nav-indicator đến đó
-
-    container[chisovitri].style.display = 'flex';
-    container[chisovitri].classList.add('active-slide');
-}
-containermacdinh(limenu[2], 2);

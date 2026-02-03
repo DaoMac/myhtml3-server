@@ -17,6 +17,34 @@ body {
     box-sizing: border-box;
 }
 
+/* Tùy chỉnh thanh cuộn cho toàn bộ trang và các box */
+::-webkit-scrollbar {
+    width: 8px; /* Độ rộng thanh cuộn */
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05); /* Nền thanh cuộn trong suốt nhẹ */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); /* Màu của thanh kéo */
+    border: 2px solid rgba(255, 255, 255, 0.1); /* Tạo khoảng trống nhẹ xung quanh */
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4); /* Sáng lên khi di chuột vào */
+}
+
+/* Đảm bảo #fileList hiện thanh cuộn mượt hơn */
+#fileList {
+    scrollbar-width: thin; /* Cho Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
 #anhnen{
     position: absolute; z-index: -100;
     width: 100vw;
@@ -93,6 +121,7 @@ body {
     font-size: large;
     padding: 3%;
     color: rgb(243, 240, 240);
+    max-width: 90%;
 }
 
 #cover-form input::placeholder {
@@ -354,7 +383,7 @@ body {
 nav {
     display: inline-block;  align-self: center;
     position: fixed;   
-    height: 5vh;    width: 50vw;    
+    height: 5vh;    max-width: 60vw;    
     top: 1vh;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;    
@@ -375,12 +404,33 @@ nav ul {
 }
 
 nav ul li {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và chữ */
     position: relative; 
-    border-radius: 20px;    padding: 0 3px;
-    color: rgb(255, 251, 251);    cursor: pointer;
+    border-radius: 20px;
+    padding: 8px 15px; /* Tăng padding để dễ bấm hơn */
+    color: rgb(255, 251, 251);
+    cursor: pointer;
     background-color: transparent !important; 
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     z-index: 2; 
+}
+
+nav ul li i {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+}
+
+/* Ẩn chữ trên màn hình nhỏ nếu muốn chỉ hiện icon */
+@media (max-width: 768px) {
+    nav ul li span {
+        display: none;
+    }
+    nav {
+        width: 80vw;
+    }
 }
 
 nav ul li:hover:not(.active) {
@@ -390,9 +440,8 @@ nav ul li:hover:not(.active) {
 
 .nav-indicator {
     position: absolute;
-    top: 10%; 
     height: 80%; 
-    background: rgb(15, 14, 14); 
+    border: #000 solid 15px; 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;

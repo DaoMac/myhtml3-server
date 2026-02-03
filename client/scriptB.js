@@ -121,19 +121,20 @@ downloadBtn?.addEventListener('click', () => {
     document.body.removeChild(link);
 });
 
+
+// Tải lên Files
 const uploadForm  = document.getElementById('uploadForm');
 const fileInput  = document.getElementById('fileInput');
 const fileName   = document.getElementById('fileName');
 const uploadStat = document.getElementById('uploadStatus');
 
-// tải lên files
 fileInput.addEventListener('change', () => {
     if (!fileInput.files.length) {
         fileName.textContent = 'Chưa chọn file';
         return;
     }
     fileName.textContent =
-        [...fileInput.files].map(f => f.name).join(', ');
+        [...fileInput.files].map(f => f.name).join(', ');   // mẫy cái chấm là toán tử spread đẻ lấy từng phần tử trong fileInput và map là thay thế từng ptu textcontent bằng f.name thêm , giữa các ptu
 });
 
 uploadForm.addEventListener('submit', async (e) => {
