@@ -459,7 +459,7 @@ nav ul li:hover:not(.active) {
 .nav-indicator {
     position: absolute;
     height: 80%;
-    border: #000 solid 15px; 
+    background-color: #000; 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;
