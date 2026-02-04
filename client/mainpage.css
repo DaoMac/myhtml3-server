@@ -279,7 +279,7 @@ body {
     border-radius: 20px;
     overflow: hidden;
     background: rgba(0, 0, 0, 0.5); 
-    max-width: 90vw;         
+    max-width: 90vw;        
     max-height: 90vh;       
 }
 
@@ -291,17 +291,29 @@ body {
 
 #chucnangUI {
     position: absolute; 
-    bottom: 1%;    
-    left: calc(50% - 155px);
+    bottom: 1%;    width: 100%;   left: 0;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: auto;    
-    height: auto;
     z-index: 1;
     gap: 15px;  
     object-fit: cover;
+}
+
+#buttonaudioplayer{
+    display: flex;
+    justify-content: space-around;
+    width: 70%; 
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+}
+
+#buttonaudioplayer button{
+    padding: 0;
+    margin: 0; 
 }
 
 #tenbai {
@@ -355,7 +367,7 @@ body {
 #chucnangUI button {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 25px;
     cursor: pointer;
     color: white;
     display: inline;
@@ -383,7 +395,7 @@ body {
 nav {
     display: inline-block;  align-self: center;
     position: fixed;   
-    height: 5vh;    max-width: 60vw;    
+    height: 5vh;    max-width: 60vw; min-width: 30vw;   
     top: 1vh;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;    
@@ -405,19 +417,25 @@ nav ul {
 
 nav ul li {
     display: flex;
-    align-items: center;
-    gap: 8px; /* Khoảng cách giữa icon và chữ */
+    justify-content: space-around;
+    align-items: center;    padding: 0 10px;
+    font-size: small;      gap: 5px;
     position: relative; 
     border-radius: 20px;
-    padding: 8px 15px; /* Tăng padding để dễ bấm hơn */
     color: rgb(255, 251, 251);
     cursor: pointer;
     background-color: transparent !important; 
     transition: all 0.3s ease;
-    z-index: 2; 
+    z-index: 2; box-sizing: border-box;
+}
+
+nav ul li h5 { 
+    margin: 0;
+    display: block;
 }
 
 nav ul li i {
+    display: block;
     width: 18px;
     height: 18px;
     transition: transform 0.3s ease;
@@ -425,7 +443,7 @@ nav ul li i {
 
 /* Ẩn chữ trên màn hình nhỏ nếu muốn chỉ hiện icon */
 @media (max-width: 768px) {
-    nav ul li span {
+    nav ul li h5 {
         display: none;
     }
     nav {
@@ -440,7 +458,7 @@ nav ul li:hover:not(.active) {
 
 .nav-indicator {
     position: absolute;
-    height: 80%; 
+    height: 80%;
     border: #000 solid 15px; 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);

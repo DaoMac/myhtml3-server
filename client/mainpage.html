@@ -35,9 +35,7 @@
     <div class="upload-box">
       <form id="uploadForm" enctype="multipart/form-data">
           <input type="file" id="fileInput" name="myfile" multiple hidden>
-          <label for="fileInput" class="upload-label">
-            📂 Chọn file
-          </label>
+              <label for="fileInput" class="upload-label">📂 Chọn file</label>
           <span id="fileName">Chưa chọn file</span>
           <button type="submit" class="upload-btn">⬆ Upload</button>
       </form>
@@ -58,7 +56,6 @@
         <video id="video-audio" autoplay muted loop playsinline>
         <source src="clientdata/ListVideo/colombina.mp4" type="video/mp4">
         </video>
-        <div>
         <div id="chucnangUI">  
         <box id="tenbai">
         <div id="tenbai-text"></div>
@@ -67,13 +64,12 @@
         <div id="time-display">
         <span id="real-timemp3">00:00</span>/<span id="full-timemp3">00:00</span>
         </div>
-        <span>
+        <div id="buttonaudioplayer">
         <button id="playBtn1" class="btn-toggle">🔂</button>
         <button id="playBtn2">⏮️</button>
         <button id="playBtn3">▶️</button>
         <button id="playBtn4">⏭️</button>
         <button id="playBtn5" class="btn-toggle">🔀</button>
-        </span>
         </div>
         </div>
         </div> 
@@ -86,11 +82,11 @@
 <nav id="dieuhuong">
   <ul>
     <div class="nav-indicator"></div>
-    <li data-index="0"><i data-lucide="home"></i> <span>Trang chủ</span></li>
-    <li data-index="1"><i data-lucide="folder-open"></i> <span>File</span></li>
-    <li data-index="2"><i data-lucide="clapperboard"></i> <span>Short</span></li>
-    <li data-index="3"><i data-lucide="music"></i> <span>Music</span></li>
-    <li data-index="4"><i data-lucide="user"></i> <span>Profile</span></li>
+    <li data-index="0"><i data-lucide="home"></i><h5>Trang chủ</h5></li>
+    <li data-index="1"><i data-lucide="folder-open"></i><h5>File</h5></li>
+    <li data-index="2"><i data-lucide="clapperboard"></i><h5>Short</h5></li>
+    <li data-index="3"><i data-lucide="music"></i><h5>Music</h5></li>
+    <li data-index="4"><i data-lucide="user"></i><h5>Profile</h5></li>
   </ul>
 </nav>
 <script>
