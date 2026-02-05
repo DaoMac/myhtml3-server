@@ -124,9 +124,9 @@ downloadBtn?.addEventListener('click', () => {
 
 // Tải lên Files
 const uploadForm  = document.getElementById('uploadForm');
-const fileInput  = document.getElementById('fileInput');
-const fileName   = document.getElementById('fileName');
-const uploadStat = document.getElementById('uploadStatus');
+const fileInput  = document.getElementById('fileInput');    // input 
+const fileName   = document.getElementById('fileName'); // thanh tên files
+const uploadStat = document.getElementById('uploadStatus'); // thanh trạnh thái
 
 fileInput.addEventListener('change', () => {
     if (!fileInput.files.length) {

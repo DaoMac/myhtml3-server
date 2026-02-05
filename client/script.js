@@ -37,6 +37,8 @@ let tuongtacroi = false;
 let tuongtaclandau = false;
 let touchStartY = 0;
 let touchEndY = 0;
+let refreshingsong = false;
+let okrefresh = true;
 
 // ============================================================================
 // 🎵 HÀM: LẤY ĐỘ RỘNG CỦA KHUNG TENBAI ĐỂ BẮT ĐẦU CHỖ CHAY 
@@ -69,7 +71,7 @@ function layvitrichaychu() {
 async function clearOldSound() {
   if (sound) {
     try {
-      await new Promise(r => setTimeout(r, 100)); // ✅ chờ 100ms cho chắc chắn 
+      await new Promise(r => setTimeout(r, 200)); // ✅ chờ 200ms cho chắc chắn 
       sound.pause();              // ✅ dừng phát
       sound.src = '';             // ✅ xóa nguồn âm thanh
       sound.load();               // ✅ reset lại trạng thái
@@ -84,22 +86,24 @@ async function clearOldSound() {
 // 🎵 HÀM: NẠP BÀI HÁT MỚI
 // ============================================================================
 async function refreshSong() {
+  refreshingsong = true;
   await clearOldSound();  // ✅ đảm bảo âm thanh cũ tắt hoàn toàn
   sound = new Audio(songList[songIndex]);
 
   // Trong refreshSong()
-  sound.addEventListener('loadedmetadata', () => {
-    tongthoigian = sound.duration;
-    fulltimemp3.textContent = formatTime(tongthoigian);
+  await new Promise((resolve) => {
+    sound.addEventListener('loadedmetadata', () => {
+      tongthoigian = sound.duration;
+      fulltimemp3.textContent = formatTime(tongthoigian);
+      const name = decodeURIComponent(songList[songIndex]).split('/').pop().replace('.mp3', '');
+      document.getElementById('tenbai-text').textContent = name;
+      setTimeout(layvitrichaychu, 150);
+      
+      resolve(); // Xong rồi mới cho chạy tiếp xuống dưới
+    }, { once: true });
     
-    const name = decodeURIComponent(songList[songIndex]).split('/').pop().replace('.mp3', '');
-    
-    // Đảm bảo cập nhật text cho thẻ SPAN
-    const textSpan = document.getElementById('tenbai-text');
-    textSpan.textContent = name;
-
-    // Đợi trình duyệt render xong rồi mới đo
-    setTimeout(layvitrichaychu, 150);
+    // Nếu lỗi tải nhạc cũng phải resolve để không bị treo code
+    sound.addEventListener('error', () => resolve(), { once: true });
   });
 
   sound.addEventListener('timeupdate', () => {
@@ -120,6 +124,8 @@ async function refreshSong() {
       nutPlaysound.textContent = '▶️';
     }
   });
+
+  refreshingsong = false;
 }
 
 // ============================================================================
@@ -173,13 +179,18 @@ async function capNhatNut(idNut) {
       break;
 
     case 2:
-      await lastSong(); // ✅ thêm await
+      if(!okrefresh)break;
+      okrefresh = false;  
+      await lastSong(); // ✅ thêm await tương tự nguyên lí nút 4
+      setTimeout(() => {
+          okrefresh=true;
+        }, 100);
       break;
 
     case 3:
-      if(tuongtacroi) break;
-      await shortVideoElement.pause();
+      if(tuongtacroi || refreshingsong) break;  
       tuongtacroi = true;
+      await shortVideoElement.pause();
       if (sound.paused) {
         nutPlaysound.textContent = '⏸️';
         await sound.play();             // ✅ chờ phát xong promise
@@ -187,12 +198,18 @@ async function capNhatNut(idNut) {
         nutPlaysound.textContent = '▶️';
         await sound.pause();            // ✅ chờ tạm dừng xong
       }
-      tuongtacroi = false;
+      setTimeout(() => {
+        tuongtacroi = false;
+      }, 100);
       break;
 
-
     case 4:
-      await nextSong(false); // ✅ thêm await
+      if(!okrefresh)break;
+      okrefresh = false;
+      await nextSong(false); // ✅ thêm await để chờ phát nhạc 
+      setTimeout(() => {    // 100ms sau mới cho đổi cái khác
+          okrefresh=true;
+        }, 100);
       break;
 
     case 5:
@@ -290,7 +307,8 @@ thanhtgianmp3.addEventListener('touchmove', e => e.stopPropagation(), { passive:
 thanhtgianmp3.addEventListener('touchend', e => e.stopPropagation(), { passive: false });
 
 // --- XỬ LÝ CUỘN CHUỘT ---
-document.getElementById('container-3').addEventListener('wheel', (e) => {
+document.getElementById('cover-video').addEventListener('wheel', (e)=>e.stopPropagation(),{passive:false}); // chống cuộn quá rộng khi đổi video
+document.getElementById('cover-video').addEventListener('wheel', (e) => {
     if (moigui) return;
     moigui = true;
 
@@ -305,11 +323,12 @@ document.getElementById('container-3').addEventListener('wheel', (e) => {
 }, { passive: true });
 
 // --- XỬ LÝ VUỐT MÀN HÌNH (MOBILE) ---
-document.getElementById('container-3').addEventListener('touchstart', (e) => {
+document.getElementById('cover-video').addEventListener('touchstart',(e)=>e.stopPropagation(), {passive:false});// chống vuốt lan khi vuốt dổi video
+document.getElementById('cover-video').addEventListener('touchstart', (e) => {
     touchStartY = e.changedTouches[0].screenY;
 }, { passive: true });
 
-document.getElementById('container-3').addEventListener('touchend', (e) => {
+document.getElementById('cover-video').addEventListener('touchend', (e) => {
     touchEndY = e.changedTouches[0].screenY;
     handleGesture();
 }, { passive: true });

@@ -86,11 +86,10 @@ body {
    ========================================= */
 
 #container-2 {
-    align-items: center;    gap: 20px; 
-    flex-direction: column;
-    overflow-y: auto;   /* KHÔNG cuộn cả container */
+    align-items: center;     
+    justify-content: space-evenly;
+    overflow-y: auto;   
 }
-
 
 #cover-form {
     display: flex;
@@ -121,7 +120,7 @@ body {
     font-size: large;
     padding: 3%;
     color: rgb(243, 240, 240);
-    max-width: 90%;
+    max-width: 60%;
 }
 
 #cover-form input::placeholder {
@@ -136,6 +135,7 @@ body {
 /* Tùy chỉnh thanh cuộn cho danh sách file */
 #fileList::-webkit-scrollbar {
     width: 6px;
+    height: 70%;
 }
 
 #fileList::-webkit-scrollbar-track {
@@ -154,13 +154,12 @@ body {
 
 #cover-form button {
     border-radius: 20px;
-    padding: 3%;
+    padding: 3%; margin: 0;
     cursor: pointer;
     transition: 0.3s ease;
     background-color: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    margin: 5%;
+    color: white; 
 }
 
 #cover-form button:hover {
@@ -178,7 +177,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     width: 90%;
-    height: 200px;
+    max-height: 300px;  margin-bottom: 5px;
     cursor: pointer;
     border: 2px solid white;
     border-radius: 20px;
@@ -248,7 +247,7 @@ body {
    4. PHẦN 2: VIDEO SHORT (#container-3)
    ========================================= */
 #cover-video {
-    display: flex;
+    display: flex;  
     justify-content: center;
     align-items: center;
     aspect-ratio: 9/16;
@@ -260,9 +259,9 @@ body {
 }
 
 #short-video {
-    display: block;
+    display: block; 
     width: auto;    margin: 2px 0;
-    height: auto;
+    height: auto;   transition: all 0.8s ease;
     max-width: 100%;
     max-height: 94vh;
     border-radius: 20px; 

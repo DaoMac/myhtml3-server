@@ -126,7 +126,7 @@ function createPetal() {
         : canvas.height - (Math.random() * (canvas.height * 0.4));
 
     // NÉ CỘT: Điểm uốn y1 đẩy ra xa tâm màn hình hoa sẽ bay lên trc rồi bay xuống 
-    let y1 = side === 'top' ? -10 : canvas.height + 10;
+    let y1 = side === 'top' ? -30 : canvas.height + 30;
 
     return {
         side: side,

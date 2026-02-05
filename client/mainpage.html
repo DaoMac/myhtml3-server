@@ -25,7 +25,7 @@
     <div id="cover-form">
       <h2>Tìm lại file đã upload</h2>
       <span>
-        <input id="ae2" type="text" placeholder="vd:(.mp3)"/>
+        <input type="text" placeholder="vd:(.mp3)"/>
         <button id="nut2">tìm kiếm</button>
       </span>
       <h3>📁 kết quả các file cần tìm:</h3>
@@ -33,10 +33,12 @@
       <button class="nutdownload">Tải về</button>
     </div> 
     <div class="upload-box">
+      <h2>Tải lên Files</h2>
+      <h4>chỉ nên tải 3 file 1 lần</h4>
       <form id="uploadForm" enctype="multipart/form-data">
           <input type="file" id="fileInput" name="myfile" multiple hidden>
               <label for="fileInput" class="upload-label">📂 Chọn file</label>
-          <span id="fileName">Chưa chọn file</span>
+          <span id="fileName">Chưa có file được chọn</span>
           <button type="submit" class="upload-btn">⬆ Upload</button>
       </form>
       <div id="uploadStatus"></div>
