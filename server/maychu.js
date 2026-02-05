@@ -49,7 +49,12 @@ function ngayGioVN(date) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, quarantineDir),
   filename: (req, file, cb) => {
-    cb(null, `${ngayGioVN(Date.now())} ${tenFileAnToan(file.originalname)}`);
+    // CHỖ QUAN TRỌNG: Sửa lỗi encoding của Multer tại đây
+    // Chuyển từ latin1 sang utf8 để đọc đúng chữ "nỗi sầu"
+    const correctName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    
+    // Sau đó mới đưa qua hàm làm sạch tên
+    cb(null, `${ngayGioVN(Date.now())} ${tenFileAnToan(correctName)}`);
   }
 });
 
