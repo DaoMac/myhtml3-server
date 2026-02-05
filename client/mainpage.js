@@ -72,7 +72,7 @@ window.addEventListener('resize', () => {
 const canvas = document.getElementById('canvasnen');
 const pen = canvas.getContext('2d');
 const petal = new Image();
-petal.src = 'clientdata/ListPhotos/longchim.png';
+petal.src = 'clientdata/Listphotos/longchim.png';
 
 function resizeCanvas() {
     // Cập nhật kích thước thực tế của các điểm ảnh trong canvas
