@@ -87,7 +87,7 @@ body {
 
 #container-2 {
     align-items: center;     
-    justify-content: space-evenly;
+    justify-content: space-around;
     overflow-y: auto;   
 }
 
