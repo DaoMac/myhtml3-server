@@ -231,9 +231,26 @@ app.get('/timfile', checkArranging, (req, res) => {
   }
 });
 
-// ==================== START ====================
+// Thiết lập dọn dẹp định kỳ mỗi 30 phút
+const BA_MƯƠI_PHÚT = 30 * 60 * 1000;
+
+setInterval(async () => {
+  // Chỉ dọn dẹp nếu server không trong trạng thái đang convert video (arranging)
+  if (!sapxepFiles.arranging) {
+    console.log('--- [Scheduled] Bắt đầu quét và dọn dẹp file trùng lặp ---');
+    try {
+      await sapxepFiles.donDepTrungLap();
+    } catch (err) {
+      console.error('Lỗi trong quá trình dọn dẹp định kỳ:', err);
+    }
+  }
+}, BA_MƯƠI_PHÚT);
+
+// Khởi động server
 const server = app.listen(3000, '0.0.0.0', () => {
   console.log('✅ Server chạy tại http://0.0.0.0:3000');
+  // Bạn có thể chạy dọn dẹp 1 lần ngay khi khởi động server
+  sapxepFiles.donDepTrungLap().catch(console.error);
 });
 
 server.keepAliveTimeout = 120000;

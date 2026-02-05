@@ -95,9 +95,48 @@ async function xuLyTatCaFile() {
   }
 }
 
-// Export nhiều thứ cùng lúc
+// arrangeFile.js
+
+// ... các hàm cũ giữ nguyên ...
+
+async function donDepTrungLap() {
+  const uploadDir = path.join(__dirname, 'uploads');
+  if (!fs.existsSync(uploadDir)) return;
+
+  const files = fs.readdirSync(uploadDir);
+  const fileGroups = {};
+
+  // Hàm lấy tên gốc (bỏ đoạn "day ... at ...")
+  const layTenGoc = (name) => name.replace(/^day \d+-\d+-\d+ at \d+_\d+_\d+ /, '');
+
+  files.forEach(file => {
+    const originalName = layTenGoc(file);
+    if (!fileGroups[originalName]) fileGroups[originalName] = [];
+    fileGroups[originalName].push(file);
+  });
+
+  for (const name in fileGroups) {
+    if (fileGroups[name].length > 1) {
+      // Sắp xếp theo tên (thời gian) để file mới nhất ở cuối
+      fileGroups[name].sort();
+      const keeps = fileGroups[name].pop(); // Giữ lại bản cuối cùng
+      
+      fileGroups[name].forEach(oldFile => {
+        try {
+          fs.unlinkSync(path.join(uploadDir, oldFile));
+          console.log(`[Hệ thống] Đã xóa bản cũ trùng lặp: ${oldFile}`);
+        } catch (e) {
+          console.error(`Lỗi xóa file: ${e.message}`);
+        }
+      });
+    }
+  }
+}
+
+// Cuối file arrangeFile.js, hãy sửa đoạn export thành thế này:
 module.exports = {
   arrangeFile,
   xuLyTatCaFile,
-  arranging: false
+  donDepTrungLap,
+  arranging: false // Biến này sẽ được xuLyTatCaFile cập nhật khi chạy
 };
