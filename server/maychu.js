@@ -8,6 +8,7 @@ const path = require('path');
 const multer = require('multer');
 const sapxepFiles = require('./arrangeFile');
 const portGuard = require('./portGuard');
+const unidecode = require('unidecode'); 
 
 const app = express();
 const PORT1 = 3000;
@@ -30,7 +31,14 @@ if (!fs.existsSync(quarantineDir)) fs.mkdirSync(quarantineDir, { recursive: true
 if (!fs.existsSync(finalUploadDir)) fs.mkdirSync(finalUploadDir, { recursive: true });
 
 function tenFileAnToan(ten) {
-  return ten.replace(/[\\\/:*?"<>|]/g, '_');
+  // 1. Chuyển tiếng Việt có dấu thành không dấu (Ví dụ: "nỗi sầu" -> "noi sau")
+  let cleanName = unidecode(ten);
+  
+  // 2. Thay thế khoảng trắng thành dấu gạch ngang (cho đẹp và dễ dùng terminal)
+  cleanName = cleanName.replace(/\s+/g, '-');
+  
+  // 3. Loại bỏ các ký tự đặc biệt nguy hiểm
+  return cleanName.replace(/[\\\/:*?"<>|]/g, '_');
 }
 
 function ngayGioVN(date) {
