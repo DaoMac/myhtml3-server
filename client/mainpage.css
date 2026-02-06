@@ -313,6 +313,8 @@ body {
 #buttonaudioplayer button{
     padding: 0;
     margin: 0; 
+    padding: 5% 3%;
+    font-size: large;
 }
 
 #tenbai {
