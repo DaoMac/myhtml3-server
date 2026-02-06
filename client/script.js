@@ -175,7 +175,7 @@ async function capNhatNut(idNut) {
   switch (idNut) {
     case 1:
       laplai = !laplai;
-      if (laplai && tronbai) capNhatNut(5);
+      if (laplai && tronbai) await capNhatNut(5);
       nutReplay.style.opacity = laplai ? '1' : '0.5';
       nutReplay.style.color = laplai ? 'orange' : 'white';
       break;
@@ -216,7 +216,7 @@ async function capNhatNut(idNut) {
 
     case 5:
       tronbai = !tronbai;
-      if (laplai && tronbai) capNhatNut(1);
+      if (laplai && tronbai) await capNhatNut(1);
       nutShuffle.style.opacity = tronbai ? '1' : '0.5';
       nutShuffle.style.color = tronbai ? 'aqua' : 'white';
       break;
@@ -327,11 +327,6 @@ function handleGesture() {
 async function playNextShort(direction) {
     if (danhsachShortvideo.length === 0) return;
 
-    // Đánh dấu đã tương tác để bật âm thanh
-    if (tuongtaclandau) {
-        shortVideoElement.muted = false; // Bật âm thanh cho Video
-    }
-
     mp4Index += direction;
 
     if (mp4Index >= danhsachShortvideo.length) mp4Index = 0;
@@ -365,19 +360,27 @@ window.addEventListener('DOMContentLoaded', async () => {
       setTimeout(layvitrichaychu, 150);
     }, {once:true});
 
+    sound.addEventListener('timeupdate', () => {
+    daphatduoc = sound.currentTime;
+    realtimemp3.textContent = formatTime(daphatduoc);
+    if (tongthoigian > 0)
+      thanhtgianmp3.value = (daphatduoc / tongthoigian) * 100;
+    });
+
     sound.addEventListener('ended', () => {
     ketthucnhac = true;
     if (laplai) {
       sound.currentTime = 0;
         capNhatNut(3); // phát lại
     }
-  });
+    });
   
-  capNhatNut(3);
+    capNhatNut(3);
+    shortVideoElement.muted = false; // Bật âm thanh cho Video
   }, {once:true});
 
-  capNhatNut(1);
-  capNhatNut(5);
+  await capNhatNut(1);
+  await capNhatNut(5);
 
 
   await laysoursevideoshort();
