@@ -372,7 +372,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         capNhatNut(3); // phát lại
     }
   });
-
+  
+  capNhatNut(3);
   }, {once:true});
 
   capNhatNut(1);
