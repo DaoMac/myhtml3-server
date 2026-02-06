@@ -97,7 +97,7 @@ function bezierY(y0, y1, y2, t) {
     const q0 = y0 + (y1 - y0) * t;  //lấy q0 trên đoạn từ gốc đến y1
     const q1 = y1 + (y2 - y1) * t;  //lấy q1 trên đoạn y1 tới y2
     return q0 + (q1 - q0) * t;  // xuất phát từ (1-t)q0+tq1
-    //đoạn này là " từ điểm ban đầu q0 nhích từ 0-100% hiệu khoảng cách 2 điểm q0 và q1 là bản chất đg bezier"
+    //đoạn này là " từ điểm ban đầu q0 nhích từ 0-100% hiệu khoảng cách 2 điểm q0 và q1"
 }
 function ve(gocxoay, p1, p2, p3){
     pen.save();
@@ -126,7 +126,7 @@ function createPetal() {
         : canvas.height - (Math.random() * (canvas.height * 0.4));
 
     // NÉ CỘT: Điểm uốn y1 đẩy ra xa tâm màn hình hoa sẽ bay lên trc rồi bay xuống 
-    let y1 = side === 'top' ? -30 : canvas.height + 30;
+    let y1 = side === 'top' ? -15 : canvas.height + 15;
 
     return {
         side: side,
