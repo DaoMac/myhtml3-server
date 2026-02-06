@@ -379,7 +379,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     shortVideoElement.muted = false; // Bật âm thanh cho Video
   }, {once:true});
 
-  await capNhatNut(1);
   await capNhatNut(5);
 
 
