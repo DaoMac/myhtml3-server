@@ -26,7 +26,6 @@ let tongthoigian = 0;
 let daphatduoc   = 0;
 let tronbai      = true;
 let laplai       = true;
-let minimode     = false;
 let songIndex    = 0;
 let songList     = [];
 let ketthucnhac  = false;
@@ -39,6 +38,8 @@ let touchStartY = 0;
 let touchEndY = 0;
 let refreshingsong = false;
 let okrefresh = true;
+let baimodau = 'clientdata/ListMP3/Through the Silent Frostbound Night 6.0 OST.mp3';
+let napbaimodau = false;
 
 // ============================================================================
 // 🎵 HÀM: LẤY ĐỘ RỘNG CỦA KHUNG TENBAI ĐỂ BẮT ĐẦU CHỖ CHAY 
@@ -85,17 +86,16 @@ async function clearOldSound() {
 // ============================================================================
 // 🎵 HÀM: NẠP BÀI HÁT MỚI
 // ============================================================================
-async function refreshSong() {
+async function refreshSong(whichsongIndex) {
   refreshingsong = true;
   await clearOldSound();  // ✅ đảm bảo âm thanh cũ tắt hoàn toàn
-  sound = new Audio(songList[songIndex]);
+  sound = new Audio(songList[whichsongIndex]);
 
-  // Trong refreshSong()
   await new Promise((resolve) => {
     sound.addEventListener('loadedmetadata', () => {
       tongthoigian = sound.duration;
       fulltimemp3.textContent = formatTime(tongthoigian);
-      const name = decodeURIComponent(songList[songIndex]).split('/').pop().replace('.mp3', '');
+      const name = decodeURIComponent(songList[whichsongIndex]).split('/').pop().replace('.mp3', '');
       document.getElementById('tenbai-text').textContent = name;
       setTimeout(layvitrichaychu, 150);
       
@@ -117,7 +117,9 @@ async function refreshSong() {
     ketthucnhac = true;
     if (laplai) {
       sound.currentTime = 0;
-      capNhatNut(3); // phát lại
+      setTimeout(()=>{
+        capNhatNut(3);
+      }, 10);      // phát lại
     } else if (tronbai) {
       nextSong(true);
     } else {
@@ -155,14 +157,14 @@ async function nextSong(isShuffle) {
     songIndex++;
     if (songIndex >= songList.length) songIndex = 0; // ✅ tránh tràn
   }
-  await refreshSong(); // ✅ thêm await
+  await refreshSong(songIndex); // ✅ thêm await
   capNhatNut(3);
 }
 
 async function lastSong() {
   songIndex--;
   if (songIndex < 0) songIndex = songList.length - 1; // ✅ tránh tràn
-  await refreshSong(); // ✅ thêm await
+  await refreshSong(songIndex); // ✅ thêm await
   capNhatNut(3);
 }
 
@@ -173,9 +175,9 @@ async function capNhatNut(idNut) {
   switch (idNut) {
     case 1:
       laplai = !laplai;
+      if (laplai && tronbai) capNhatNut(5);
       nutReplay.style.opacity = laplai ? '1' : '0.5';
       nutReplay.style.color = laplai ? 'orange' : 'white';
-      if (laplai && tronbai) capNhatNut(5);
       break;
 
     case 2:
@@ -214,9 +216,9 @@ async function capNhatNut(idNut) {
 
     case 5:
       tronbai = !tronbai;
+      if (laplai && tronbai) capNhatNut(1);
       nutShuffle.style.opacity = tronbai ? '1' : '0.5';
       nutShuffle.style.color = tronbai ? 'aqua' : 'white';
-      if (laplai && tronbai) capNhatNut(1);
       break;
   }
 }
@@ -247,34 +249,6 @@ async function laysoursevideoshort() {
     console.error('⚠️ Lỗi lấy danh sách video short:', err);
   }
 }
-
-// ============================================================================
-// 🚀 KHỞI ĐỘNG TRÌNH PHÁT NHẠC
-// ============================================================================
-window.addEventListener('DOMContentLoaded', async () => {
-  await layDanhSachBaiHat();
-
-  if (songList.length === 0) {
-    console.warn('⚠️ Không có bài hát nào trong server!');
-  } else {
-    songIndex = Math.floor(Math.random()*(songList.length-1));
-    refreshSong();
-  }
-  await laysoursevideoshort();
-  capNhatNut(1);
-  capNhatNut(5);
-
-  // Nạp video đầu tiên vào thẻ video
-    if (danhsachShortvideo.length > 0) {
-        shortVideoElement.src = danhsachShortvideo[songIndex];
-        shortVideoElement.load();
-    try {
-        await shortVideoElement.play();
-    } catch (err) {
-        console.warn("Tự động phát video bị chặn, chờ tương tác người dùng.");
-    }
-    }
-});
 
 // ============================================================================
 // 🎬 SỰ KIỆN GIAO DIỆN
@@ -329,8 +303,14 @@ document.getElementById('cover-video').addEventListener('touchstart', (e) => {
 }, { passive: true });
 
 document.getElementById('cover-video').addEventListener('touchend', (e) => {
+    if (moigui) return;
+    moigui = true;
+
     touchEndY = e.changedTouches[0].screenY;
     handleGesture();
+
+    // Chống spam chuyển video quá nhanh
+    setTimeout(() => { moigui = false; }, 800);
 }, { passive: true });
 
 function handleGesture() {
@@ -347,23 +327,71 @@ function handleGesture() {
 async function playNextShort(direction) {
     if (danhsachShortvideo.length === 0) return;
 
-    // direction: 1 là đi tới, -1 là lùi lại
+    // Đánh dấu đã tương tác để bật âm thanh
+    if (tuongtaclandau) {
+        shortVideoElement.muted = false; // Bật âm thanh cho Video
+    }
+
     mp4Index += direction;
 
-    // Vòng lặp danh sách video khi về cuối và đầu
     if (mp4Index >= danhsachShortvideo.length) mp4Index = 0;
     if (mp4Index < 0) mp4Index = danhsachShortvideo.length - 1;
 
-    // Cập nhật nguồn video
     shortVideoElement.pause();
-    shortVideoElement.src = danhsachShortvideo[mp4Index];
-    shortVideoElement.play();
-    
+    shortVideoElement.src = danhsachShortvideo[mp4Index]; 
+
+    try {
+        await shortVideoElement.play();
+    } catch (err) {
+        console.warn("Không thể phát video:", err);
+    }
+}
+
+// ============================================================================
+// 🚀 KHỞI ĐỘNG TRÌNH PHÁT NHẠC
+// ============================================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  await layDanhSachBaiHat();
+
+  document.addEventListener('click',()=>{
+    tuongtaclandau = true;
+    sound = new Audio(baimodau);
+
+      sound.addEventListener('loadedmetadata', () => {
+      tongthoigian = sound.duration;
+      fulltimemp3.textContent = formatTime(tongthoigian);
+      const name = decodeURIComponent(songList[whichsongIndex]).split('/').pop().replace('.mp3', '');
+      document.getElementById('tenbai-text').textContent = name;
+      setTimeout(layvitrichaychu, 150);
+    }, {once:true});
+
+    sound.addEventListener('ended', () => {
+    ketthucnhac = true;
+    if (laplai) {
+      sound.currentTime = 0;
+        capNhatNut(3); // phát lại
+    }
+  });
+
+  }, {once:true});
+
+  capNhatNut(1);
+  capNhatNut(5);
+
+
+  await laysoursevideoshort();
+
+  // Nạp video đầu tiên vào thẻ video
+    if (danhsachShortvideo.length > 0) {
+        shortVideoElement.src = danhsachShortvideo[songIndex];
+        shortVideoElement.load();
+        shortVideoElement.muted = true;
     try {
         await shortVideoElement.play();
     } catch (err) {
         console.warn("Tự động phát video bị chặn, chờ tương tác người dùng.");
     }
-}
+    }
+});
 
 console.log('🎶 script điều khiển hộp nhạc đã load xong');

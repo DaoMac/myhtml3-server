@@ -7,51 +7,14 @@ const inputTim     = document.getElementById('ae2');
 const fileListDiv  = document.getElementById('fileList');
 const downloadBtn  = document.querySelector('.nutdownload');
 
-// Chức năng hiển thị dữ liệu ESP
-const espon        = document.getElementById('espon');
-const nhietdo      = document.getElementById('nhietdo');
-const doamDiv      = document.getElementById('doam');
-const esprealtime  = document.getElementById('thoi-gian-thuc-dang-do');
-
 // Biến trạng thái
 let selectedFile   = null; 
-let moigui         = false;      // Chống spam request
+var moigui         = false;      // Chống spam request
 let cocambienesp   = true;      // Kiểm soát việc gọi API ESP
 
 /* ==========================================================
    2. CÁC HÀM XỬ LÝ CHÍNH
    ========================================================== */
-
-/**
- * Lấy dữ liệu JSON từ ESP8266 thông qua server
- */
-async function layData() {
-    try {
-        const res = await fetch('/dataesp');
-        const data = await res.json();
-
-        if (data.trangthai === "online") {
-            if (espon) espon.textContent = "ONLINE-🟢";
-            cocambienesp = true;
-
-            if (data.duLieu.nhietdo !== undefined && nhietdo) {
-                nhietdo.textContent = `TEMP: ${data.duLieu.nhietdo}°C`;
-            }
-            if (data.duLieu.doam !== undefined && doamDiv) {
-                doamDiv.textContent = `HUM: ${data.duLieu.doam}%`;
-            }
-            if (data.thoigian !== undefined && esprealtime) {
-                esprealtime.textContent = `Cập nhật: ${data.thoigian}`; 
-            }
-        } else {
-            if (espon) espon.textContent = "OFFLINE-🔴 • ESP ngắt kết nối";
-            cocambienesp = false;
-        }
-    } catch (err) {
-        if (espon) espon.textContent = "OFFLINE-🔴 • SERVER DIE";
-        console.error('Lỗi kết nối server:', err);
-    }
-}
 
 /* ==========================================================
    3. LẮNG NGHE SỰ KIỆN (Event Listeners)
@@ -102,12 +65,18 @@ nutTim?.addEventListener('click', async () => {
     } catch (err) {
         alert('Lỗi khi tìm file: ' + err);
     }
+
+    // Chống spam chuyển video quá nhanh
+    setTimeout(() => { moigui = false; }, 800);
 });
 
 /**
  * Sự kiện Tải về File đã chọn
  */
 downloadBtn?.addEventListener('click', () => {
+    if (moigui) return; // Nếu đang trong thời gian chờ thì thoát
+    moigui = true;
+
     if (!selectedFile) {
         alert('Vui lòng chọn một file từ danh sách trước!');
         return;
@@ -119,6 +88,9 @@ downloadBtn?.addEventListener('click', () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Chống spam chuyển video quá nhanh
+    setTimeout(() => { moigui = false; }, 800);
 });
 
 
@@ -138,6 +110,9 @@ fileInput.addEventListener('change', () => {
 });
 
 uploadForm.addEventListener('submit', async (e) => {
+    if (moigui) return; // Nếu đang trong thời gian chờ thì thoát
+    moigui = true;
+
     e.preventDefault();
 
     if (!fileInput.files.length) {
@@ -168,24 +143,13 @@ uploadForm.addEventListener('submit', async (e) => {
         uploadStat.textContent = '❌ Upload lỗi';
         console.error(err);
     }
+
+    // Chống spam chuyển video quá nhanh
+    setTimeout(() => { moigui = false; }, 2000);
 });
 
 
 /* ==========================================================
    4. VẬN HÀNH (Initialization)
    ========================================================== */
-
-// Khởi chạy lấy dữ liệu ESP ngay khi load
-layData();
-
-// Vòng lặp lấy dữ liệu định kỳ mỗi 65 giây
-setInterval(() => {
-    if (cocambienesp) layData();
-}, 65000);
-
-// Reset trạng thái chống spam mỗi 5 giây
-setInterval(() => {
-    moigui = false;
-}, 5000);
-
 console.log('ScriptB đã được lọc và sẵn sàng.');

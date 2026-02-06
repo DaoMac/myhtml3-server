@@ -125,7 +125,7 @@ function removeQuarantine(name) {
 
 // ==================== ROUTES ====================
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'mainpage.html'));
+  res.sendFile(path.join(__dirname, '..', 'client', 'GETinteractive.html'));
 });
 
 // ==================== DOWNLOAD ====================

@@ -126,7 +126,7 @@ function createPetal() {
         : canvas.height - (Math.random() * (canvas.height * 0.4));
 
     // NÉ CỘT: Điểm uốn y1 đẩy ra xa tâm màn hình hoa sẽ bay lên trc rồi bay xuống 
-    let y1 = side === 'top' ? -15 : canvas.height + 15;
+    let y1 = side === 'top' ? 0 : canvas.height + 0;
 
     return {
         side: side,
@@ -140,13 +140,15 @@ function createPetal() {
         speedT: Math.random() * 0.0006 + 0.0004, 
         size: sizeMin,
         w: Math.random() * Math.PI * 2,
-        speedW: (Math.random() - 0.5) * 0.02    //lấy từ -0.5 tới 0.5 để quay ngược hoặc xuôi
+        speedW: (Math.random() - 0.5) * 0.3,    //lấy từ -0.5 tới 0.5 để quay ngược hoặc xuôi
+        growspeed: (Math.random() - 0.5) * 0.02,
+        grew: Math.random() * Math.PI * 2
     };
 }
 
 // Khởi tạo mảng ban đầu
 let petals = [];
-for (let i = 0; i < 40; i++) {
+for (let i = 0; i < 50; i++) {
     petals.push(createPetal());
     // Cho t chạy ngẫu nhiên để hoa không bay cùng lúc lúc mới load trang
     petals[i].t = Math.random(); 
@@ -162,7 +164,8 @@ function animate() {
         // p.w là góc xoay, nó tăng liên tục nên dùng nó để tạo nhịp co giãn rất tiện
         // Math.sin trả về giá trị từ -1 đến 1. 
         // Ta đưa nó về hệ số từ 0 đến 1 bằng cách: (Math.sin(p.w) + 1) / 2
-        let nhipCoGian = (Math.sin(p.w) + 1) / 2; 
+        p.grew += p.growspeed;
+        let nhipCoGian = (Math.sin(p.grew) + 1) / 2; 
 
         // Kích thước sẽ biến thiên liên tục giữa sizeMin và sizeMax
         p.size = sizeMin + (sizeMax - sizeMin) * nhipCoGian;
