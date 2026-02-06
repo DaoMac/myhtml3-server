@@ -360,7 +360,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       sound.addEventListener('loadedmetadata', () => {
       tongthoigian = sound.duration;
       fulltimemp3.textContent = formatTime(tongthoigian);
-      const name = decodeURIComponent(songList[whichsongIndex]).split('/').pop().replace('.mp3', '');
+      const name = decodeURIComponent(baimodau).split('/').pop().replace('.mp3', '');
       document.getElementById('tenbai-text').textContent = name;
       setTimeout(layvitrichaychu, 150);
     }, {once:true});
