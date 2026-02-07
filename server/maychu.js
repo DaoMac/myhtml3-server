@@ -14,8 +14,8 @@ const app = express();
 const PORT1 = 3000;
 
 const TAI_KHOAN_ADMIN = {
-  user: 'admin',      // Thay tên đăng nhập bạn muốn
-  pass: '123456789'   // Mật khẩu đúng 9 ký tự
+  user: 'MinhHieu@luucim.com',      // Thay tên đăng nhập bạn muốn
+  pass: '@07022026'   // Mật khẩu đúng 9 ký tự
 };
 // ==================== CẤU HÌNH UPLOAD ====================
 const allowedExts = [
