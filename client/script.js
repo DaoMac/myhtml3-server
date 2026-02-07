@@ -327,7 +327,7 @@ function handleGesture() {
 async function playNextShort(direction) {
     if (danhsachShortvideo.length === 0) return;
 
-    if(!sound.paused)await sound.pause();
+    if(!sound.paused)await capNhatNut(3);
     mp4Index += direction;
 
     if (mp4Index >= danhsachShortvideo.length) mp4Index = 0;
