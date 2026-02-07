@@ -191,8 +191,8 @@ async function capNhatNut(idNut) {
     case 3:
       if(tuongtacroi || refreshingsong) break;  
       tuongtacroi = true;
-      if(!shortVideoElement.paused)await shortVideoElement.pause();
       if (sound.paused) {
+        if(!shortVideoElement.paused)await shortVideoElement.pause();
         nutPlaysound.textContent = '⏸️';
         await sound.play();             // ✅ chờ phát xong promise
       } else {
@@ -338,7 +338,7 @@ async function playNextShort(direction) {   //dừng audioplayer(nếu đg phát
     if (mp4Index >= danhsachShortvideo.length) mp4Index = 0;
     if (mp4Index < 0) mp4Index = danhsachShortvideo.length - 1;
 
-    napvideoshort(mp4Index); 
+    await napvideoshort(mp4Index); 
 
     try {
         await shortVideoElement.play();
@@ -394,7 +394,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Nạp video đầu tiên vào thẻ video
     if (danhsachShortvideo.length > 0) {
         mp4Index = Math.floor(Math.random()*danhsachShortvideo.length);
-        napvideoshort(mp4Index);
+        await napvideoshort(mp4Index);
         shortVideoElement.muted = true;
     try {
         await shortVideoElement.play();
