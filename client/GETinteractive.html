@@ -2,67 +2,251 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Chuyển Hướng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hub - Danh Sách Ứng Dụng</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="clientdata/a simple, modern mus (1).ico" type="image/x-icon">
     
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #1a1a1a; /* Nền tối cho sang */
-            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .container {
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+        }
+
+        .hub-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hub-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hub-header h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .hub-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .app-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-height: 180px;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .app-card:active {
+            transform: translateY(-2px);
+        }
+
+        .app-card i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .app-card span {
+            font-size: 16px;
+            font-weight: 600;
             text-align: center;
         }
 
-        /* Nút Icon chính */
-        .main-button {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
+        .logout-section {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
             text-decoration: none;
-            color: #ffffff;
-            transition: transform 0.3s ease;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 15px;
         }
 
-        .main-button i {
-            font-size: 80px; /* Độ lớn của icon */
-            color: #00d2ff;  /* Màu xanh neon */
-            margin-bottom: 15px;
-            text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+        .logout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
         }
 
-        .main-button span {
-            font-size: 18px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .logout-btn:active {
+            transform: scale(0.98);
         }
 
-        /* Hiệu ứng khi di chuột vào */
-        .main-button:hover {
-            transform: scale(1.1); /* Phóng to nhẹ */
+        .device-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
         }
 
-        .main-button:hover i {
-            color: #3a86ff; /* Đổi màu nhẹ khi hover */
+        @media (max-width: 768px) {
+            .hub-container {
+                padding: 25px;
+            }
+
+            .hub-header h1 {
+                font-size: 28px;
+            }
+
+            .apps-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .app-card {
+                padding: 20px 15px;
+                min-height: 150px;
+            }
+
+            .app-card i {
+                font-size: 36px;
+            }
+
+            .app-card span {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hub-container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <a href="mainpage.html" class="main-button">
-            <i class="fa-solid fa-house-chimney"></i>
-            <span>Vào Trang Chính</span>
-        </a>
+    <div class="hub-container">
+        <div class="hub-header">
+            <h1>🎵 Hub Ứng Dụng</h1>
+            <p>Chọn ứng dụng để tiếp tục</p>
+        </div>
+
+        <div class="apps-grid">
+            <a href="mainpage.html" class="app-card">
+                <i class="fas fa-home"></i>
+                <span>Trang Chính</span>
+            </a>
+
+            <a href="javascript:void(0)" class="app-card" onclick="alert('🚧 Đang phát triển')">
+                <i class="fas fa-image"></i>
+                <span>Thư Viện Ảnh</span>
+            </a>
+
+            <a href="javascript:void(0)" class="app-card" onclick="alert('🚧 Đang phát triển')">
+                <i class="fas fa-video"></i>
+                <span>Video Player</span>
+            </a>
+
+            <a href="javascript:void(0)" class="app-card" onclick="alert('🚧 Đang phát triển')">
+                <i class="fas fa-cog"></i>
+                <span>Cài Đặt</span>
+            </a>
+        </div>
+
+        <div class="logout-section">
+            <a href="/dangxuat" class="logout-btn">🔓 Đăng Xuất</a>
+            <div class="device-info">
+                <p>🔐 Session bảo vệ - Đăng nhập sẽ hết hạn sau 24 giờ</p>
+                <p id="connectionInfo"></p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Hiển thị thông tin kết nối
+        document.getElementById('connectionInfo').textContent = 
+            `📶 IP: ${window.location.hostname} | Tốc độ: 4MB/s (được quản lý)`;
+    </script>
 
 </body>
 </html>

@@ -9,10 +9,14 @@ const multer = require('multer');
 const sapxepFiles = require('./arrangeFile');
 const portGuard = require('./portGuard');
 const unidecode = require('unidecode'); 
-
+const session = require('express-session');
 const app = express();
 const PORT1 = 3000;
 
+const TAI_KHOAN_ADMIN = {
+  user: 'admin',      // Thay tên đăng nhập bạn muốn
+  pass: '123456789'   // Mật khẩu đúng 9 ký tự
+};
 // ==================== CẤU HÌNH UPLOAD ====================
 const allowedExts = [
   '.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a',
@@ -30,6 +34,15 @@ const finalUploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(quarantineDir)) fs.mkdirSync(quarantineDir, { recursive: true });
 if (!fs.existsSync(finalUploadDir)) fs.mkdirSync(finalUploadDir, { recursive: true });
 
+// 4. Middleware kiểm tra đăng nhập
+function yeuCauDangNhap(req, res, next) {
+  if (req.session.daDangNhap) {
+    return next();
+  }
+  res.redirect('/dangnhap');
+}
+
+
 function tenFileAnToan(ten) {
   // 1. Chuyển tiếng Việt có dấu thành không dấu (Ví dụ: "nỗi sầu" -> "noi sau")
   let cleanName = unidecode(ten);
@@ -45,6 +58,53 @@ function ngayGioVN(date) {
   date = new Date(date);
   return `day ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()} at ${date.getHours()}_${date.getMinutes()}_${date.getSeconds()}`;
 }
+
+function checkArranging(req, res, next) {
+  if (sapxepFiles.arranging) {
+    return res.status(503).send('Server đang sắp xếp file, vui lòng chờ');
+  }
+  next();
+}
+
+// ==================== KIỂM SOÁT BĂNG THÔNG ====================
+const bandwidthControl = {
+  limits: {
+    upload: 4 * 1024 * 1024,    // 4 MB/s upload
+    download: 4 * 1024 * 1024   // 4 MB/s download
+  },
+  perIP: {}
+};
+
+function bandwidthMiddleware(req, res, next) {
+  const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+  
+  // Khởi tạo tracking cho IP mới
+  if (!bandwidthControl.perIP[clientIP]) {
+    bandwidthControl.perIP[clientIP] = {
+      uploadedThisWindow: 0,
+      downloadedThisWindow: 0,
+      lastResetTime: Date.now()
+    };
+  }
+
+  const tracking = bandwidthControl.perIP[clientIP];
+  const now = Date.now();
+  const oneSecond = 1000;
+
+  // Reset nếu quá 1 giây
+  if (now - tracking.lastResetTime > oneSecond) {
+    tracking.uploadedThisWindow = 0;
+    tracking.downloadedThisWindow = 0;
+    tracking.lastResetTime = now;
+  }
+
+  // Thêm info vào request để middleware download sử dụng
+  req.bandwidthTracking = tracking;
+  res.bandwidthTracking = tracking;
+  
+  next();
+}
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, quarantineDir),
@@ -73,14 +133,13 @@ app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(portGuard);
-
-function checkArranging(req, res, next) {
-  if (sapxepFiles.arranging) {
-    return res.status(503).send('Server đang sắp xếp file, vui lòng chờ');
-  }
-  next();
-}
-
+app.use(bandwidthMiddleware);  // Thêm middleware kiểm soát băng thông
+app.use(session({
+  secret: 'chuoi-bi-mat-cua-ban', // Bạn có thể đổi chuỗi này
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 } // Đăng nhập có hiệu lực 1 ngày
+}));
 app.use(express.static(path.join(__dirname, '..', 'client')));
 app.use('/videoshort', checkArranging, express.static(finalUploadDir)); //không cho lấy video short khi đg sắp xếp
 
@@ -124,7 +183,74 @@ function removeQuarantine(name) {
 }
 
 // ==================== ROUTES ====================
-app.get('/', (req, res) => {
+// 5. Các Routes mới
+app.get('/dangnhap', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client', 'dangnhap.html'));
+});
+
+app.post('/xuly-dangnhap', (req, res) => {
+  const { username, password } = req.body;
+
+  // Kiểm tra độ dài mật khẩu và thông tin
+  if (password.length === 9 && username === TAI_KHOAN_ADMIN.user && password === TAI_KHOAN_ADMIN.pass) {
+    req.session.daDangNhap = true;
+    req.session.username = username;
+    req.session.loginTime = new Date();
+    req.session.clientIP = req.ip || req.connection.remoteAddress || 'Unknown';
+    console.log(`✅ ${username} đăng nhập từ ${req.session.clientIP}`);
+    return res.json({ success: true });
+  } else {
+    return res.json({ success: false, msg: 'Sai tài khoản hoặc mật khẩu không đủ 9 ký tự!' });
+  }
+});
+
+// Lấy thông tin người dùng từ session
+app.get('/get-user-info', yeuCauDangNhap, (req, res) => {
+  res.json({
+    success: true,
+    username: req.session.username || 'Người dùng',
+    loginTime: req.session.loginTime
+  });
+});
+
+// Lấy IP của client
+app.get('/get-client-ip', yeuCauDangNhap, (req, res) => {
+  const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 'Unknown';
+  res.json({ ip: clientIP });
+});
+
+// Lấy dung lượng storage đã sử dụng
+app.get('/get-storage-usage', yeuCauDangNhap, (req, res) => {
+  try {
+    const files = fs.readdirSync(finalUploadDir);
+    let totalSize = 0;
+    
+    files.forEach(file => {
+      const filePath = path.join(finalUploadDir, file);
+      const stats = fs.statSync(filePath);
+      totalSize += stats.size;
+    });
+
+    // Chuyển đổi bytes thành MB
+    const sizeInMB = (totalSize / (1024 * 1024)).toFixed(2);
+    res.json({
+      success: true,
+      usage: `${sizeInMB} MB / 5000 MB`,
+      sizeInBytes: totalSize
+    });
+  } catch (err) {
+    res.json({ success: false, usage: '0 MB', error: err.message });
+  }
+});
+
+app.get('/dangxuat', (req, res) => {
+  const username = req.session.username || 'Người dùng';
+  console.log(`🔓 ${username} đăng xuất`);
+  req.session.destroy();
+  res.redirect('/dangnhap');
+});
+
+app.get('/', yeuCauDangNhap, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'client', 'GETinteractive.html'));
 });
 
@@ -137,8 +263,47 @@ app.get('/download/:filename', checkArranging, (req, res) => {
     return res.status(404).send('File không tồn tại');
   }
 
-  // Lúc này portGuard + server đều biết rõ file nào bị lấy
-  res.download(filePath);
+  const fileStats = fs.statSync(filePath);
+  const fileSize = fileStats.size;
+  
+  // Kiểm soát băng thông: giới hạn tốc độ tải
+  const maxBytesPerSecond = 4 * 1024 * 1024; // 4 MB/s
+  const torrentSize = fileSize; // size của file cần tải
+  const estimatedTime = Math.ceil(torrentSize / maxBytesPerSecond);
+  
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.setHeader('Content-Length', fileSize);
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('X-Download-Time', `${estimatedTime}s`);
+  
+  // Tạo stream với kiểm soát tốc độ
+  const fileStream = fs.createReadStream(filePath);
+  let sentBytes = 0;
+  let startTime = Date.now();
+
+  fileStream.on('data', (chunk) => {
+    sentBytes += chunk.length;
+    const elapsed = (Date.now() - startTime) / 1000;
+    const expectedBytes = maxBytesPerSecond * elapsed;
+
+    // Nếu vượt quá tốc độ cho phép, tạm dừng stream
+    if (sentBytes > expectedBytes * 1.1) {
+      fileStream.pause();
+      const delay = (sentBytes / maxBytesPerSecond - elapsed) * 1000;
+      setTimeout(() => fileStream.resume(), delay);
+    }
+  });
+
+  console.log(`📥 Tải file: ${filename} (${(fileSize / 1024 / 1024).toFixed(2)}MB) từ ${req.ip}`);
+  fileStream.pipe(res);
+
+  res.on('finish', () => {
+    console.log(`✅ Tải hoàn thành: ${filename}`);
+  });
+
+  res.on('error', (err) => {
+    console.error(`❌ Lỗi tải file ${filename}:`, err);
+  });
 });
 
 // ==================== UPLOAD ====================

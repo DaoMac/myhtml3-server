@@ -244,8 +244,10 @@ async function laysoursevideoshort() {
     if (!res.ok) throw new Error('Không thể lấy short video!');
     const data = await res.json();
     danhsachShortvideo = data.nguonMP4;
+    return danhsachShortvideo;
   } catch (err) {
     console.error('⚠️ Lỗi lấy danh sách video short:', err);
+    return[];
   }
 }
 
@@ -351,9 +353,9 @@ async function playNextShort(direction) {   //dừng audioplayer(nếu đg phát
 // 🚀 KHỞI ĐỘNG TRÌNH PHÁT NHẠC
 // ============================================================================
 window.addEventListener('DOMContentLoaded', async () => {
-  await layDanhSachBaiHat();
-  await laysoursevideoshort();
-
+  const listamthanh = await layDanhSachBaiHat();
+  const listshortvideo = await laysoursevideoshort();
+  
     sound = new Audio(baimodau);
 
     sound.addEventListener('loadedmetadata', () => {

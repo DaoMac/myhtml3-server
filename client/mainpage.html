@@ -8,6 +8,7 @@
   <script src="mainpage.js" defer></script>
   <script src="script.js" defer></script>
   <script src="scriptB.js" defer></script>
+  <script src="profile.js" defer></script>
   <script src="https://unpkg.com/lucide@latest" defer></script>
   <link rel="icon" href="clientdata/a simple, modern mus (1).ico" type="image/x-icon">
 </head>
@@ -78,7 +79,47 @@
    </div>
 
    <div class="container" id="container-5">
-    
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">👤</div>
+          <h2 id="profileUsername">Người Dùng</h2>
+          <p id="profileLoginTime">Đã đăng nhập</p>
+        </div>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <span class="info-label">🔐 Trạng Thái</span>
+            <span class="info-value">Đã Xác Thực</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">⏰ Thời Hạn</span>
+            <span class="info-value">24 Giờ</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">📱 Thiết Bị</span>
+            <span class="info-value" id="deviceInfo">Browser</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">🌐 Địa Chỉ IP</span>
+            <span class="info-value" id="ipAddress">127.0.0.1</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">📊 Dung Lượng</span>
+            <span class="info-value" id="storageUsage">Đang tính...</span>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <a href="/dangxuat" class="logout-btn-profile">
+            <i data-lucide="log-out"></i>
+            <span>Đăng Xuất</span>
+          </a>
+        </div>
+
+        <div class="profile-footer">
+          <p>🔒 Hệ thống bảo mật - Dữ liệu được mã hóa</p>
+        </div>
+      </div>
    </div> 
 
 <nav id="dieuhuong">
