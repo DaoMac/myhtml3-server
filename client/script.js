@@ -192,7 +192,7 @@ async function capNhatNut(idNut) {
     case 3:
       if(tuongtacroi || refreshingsong) break;  
       tuongtacroi = true;
-      await shortVideoElement.pause();
+      if(!shortVideoElement.paused)await shortVideoElement.pause();
       if (sound.paused) {
         nutPlaysound.textContent = '⏸️';
         await sound.play();             // ✅ chờ phát xong promise
@@ -327,6 +327,7 @@ function handleGesture() {
 async function playNextShort(direction) {
     if (danhsachShortvideo.length === 0) return;
 
+    if(!sound.paused)await sound.pause();
     mp4Index += direction;
 
     if (mp4Index >= danhsachShortvideo.length) mp4Index = 0;
