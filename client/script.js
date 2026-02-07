@@ -381,7 +381,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   document.addEventListener('click',async()=>{
     tuongtaclandau = true;
-    if(!sound.paused)await capNhatNut(3);
+    if(sound.paused)await capNhatNut(3);
     shortVideoElement.muted = false; // Bật âm thanh cho Video nhưng chưa play
   }, {once:true});
 
