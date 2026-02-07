@@ -352,12 +352,11 @@ async function playNextShort(direction) {   //dừng audioplayer(nếu đg phát
 // ============================================================================
 window.addEventListener('DOMContentLoaded', async () => {
   await layDanhSachBaiHat();
+  await laysoursevideoshort();
 
-  document.addEventListener('click',()=>{
-    tuongtaclandau = true;
     sound = new Audio(baimodau);
 
-      sound.addEventListener('loadedmetadata', () => {
+    sound.addEventListener('loadedmetadata', () => {
       tongthoigian = sound.duration;
       fulltimemp3.textContent = formatTime(tongthoigian);
       const name = decodeURIComponent(baimodau).split('/').pop().replace('.mp3', '');
@@ -379,15 +378,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         capNhatNut(3); // phát lại
     }
     });
-  
-    capNhatNut(3);
-    shortVideoElement.muted = false; // Bật âm thanh cho Video
+
+  document.addEventListener('click',async()=>{
+    tuongtaclandau = true;
+    if(!sound.paused)await capNhatNut(3);
+    shortVideoElement.muted = false; // Bật âm thanh cho Video nhưng chưa play
   }, {once:true});
 
   await capNhatNut(5);
-
-
-  await laysoursevideoshort();
 
   shortVideoElement.addEventListener('play',async()=>{
     if(!sound.paused)await capNhatNut(3);
