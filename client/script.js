@@ -386,7 +386,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // Nạp video đầu tiên vào thẻ video
     if (danhsachShortvideo.length > 0) {
-        shortVideoElement.src = danhsachShortvideo[songIndex];
+        shortVideoElement.src = danhsachShortvideo[Math.floor(Math.random()*danhsachShortvideo.length)];
         shortVideoElement.load();
         shortVideoElement.muted = true;
     try {
