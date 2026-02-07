@@ -37,12 +37,14 @@ function chuyenDinhDangVideo(input, output) {
       '-c:v', 'libx264',
       '-preset', 'fast',
       '-movflags', '+faststart',
-      '-c:a', 'aac',
+      '-c:a', 'aac',       // Vẫn dùng AAC để đảm bảo không lỗi trên trình duyệt
+      '-b:a', '192k',      // Tăng bitrate lên 192k để giữ chất lượng âm thanh cao
+      '-af', 'loudnorm',    // Bộ lọc chuẩn hóa âm thanh về mức tiêu chuẩn (hết bị nhỏ)
       output
     ]);
     ff.on('close', (code) => {
       if (code === 0) resolve(true);
-      else reject(new Error('FFmpeg convert failed'));
+      else reject(new Error('FFmpeg convert failed')); //
     });
   });
 }

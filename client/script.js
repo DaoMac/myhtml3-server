@@ -82,7 +82,6 @@ async function clearOldSound() {
     sound = null; // ✅ xóa tham chiếu
   }
 }
-
 // ============================================================================
 // 🎵 HÀM: NẠP BÀI HÁT MỚI
 // ============================================================================
@@ -324,7 +323,13 @@ function handleGesture() {
     }
 }
 
-async function playNextShort(direction) {
+async function napvideoshort(chisobaihat) { //dừng audio(nếu có) và nạp videoshort mới 
+  shortVideoElement.pause();
+  shortVideoElement.src = danhsachShortvideo[chisobaihat];
+  shortVideoElement.load(); 
+}
+
+async function playNextShort(direction) {   //dừng audioplayer(nếu đg phát) và tăng/giảm shortvideo
     if (danhsachShortvideo.length === 0) return;
 
     if(!sound.paused)await capNhatNut(3);
@@ -333,8 +338,7 @@ async function playNextShort(direction) {
     if (mp4Index >= danhsachShortvideo.length) mp4Index = 0;
     if (mp4Index < 0) mp4Index = danhsachShortvideo.length - 1;
 
-    shortVideoElement.pause();
-    shortVideoElement.src = danhsachShortvideo[mp4Index]; 
+    napvideoshort(mp4Index); 
 
     try {
         await shortVideoElement.play();
@@ -385,10 +389,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await laysoursevideoshort();
 
+  shortVideoElement.addEventListener('play',async()=>{
+    if(!sound.paused)await capNhatNut(3);
+  }); 
+
   // Nạp video đầu tiên vào thẻ video
     if (danhsachShortvideo.length > 0) {
-        shortVideoElement.src = danhsachShortvideo[Math.floor(Math.random()*danhsachShortvideo.length)];
-        shortVideoElement.load();
+        mp4Index = Math.floor(Math.random()*danhsachShortvideo.length);
+        napvideoshort(mp4Index);
         shortVideoElement.muted = true;
     try {
         await shortVideoElement.play();
