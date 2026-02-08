@@ -135,13 +135,13 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(portGuard);
 app.use(bandwidthMiddleware);  // Thêm middleware kiểm soát băng thông
 app.use(session({
-  secret: 'chuoi-bi-mat-cua-ban', // Bạn có thể đổi chuỗi này
+  secret: 'minh-hieu-beo', // Bạn có thể đổi chuỗi này
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // Đăng nhập có hiệu lực 1 ngày
 }));
-app.use(express.static(path.join(__dirname, '..', 'client')));
-app.use('/videoshort', checkArranging, express.static(finalUploadDir)); //không cho lấy video short khi đg sắp xếp
+app.use(yeuCauDangNhap, checkArranging, express.static(path.join(__dirname, '..', 'client')));
+app.use('/videoshort', yeuCauDangNhap, checkArranging, express.static(finalUploadDir)); //không cho lấy video short khi đg sắp xếp
 
 // ==================== BIẾN ESP ====================
 let duLieuJsonESP = {};
@@ -255,7 +255,7 @@ app.get('/', yeuCauDangNhap, (req, res) => {
 });
 
 // ==================== DOWNLOAD ====================
-app.get('/download/:filename', checkArranging, (req, res) => {
+app.get('/download/:filename', yeuCauDangNhap, checkArranging, (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(finalUploadDir, filename);
 
@@ -307,7 +307,7 @@ app.get('/download/:filename', checkArranging, (req, res) => {
 });
 
 // ==================== UPLOAD ====================
-app.post('/guifile', checkArranging, (req, res) => {
+app.post('/guifile', yeuCauDangNhap, checkArranging, (req, res) => {
   let IsNewMP4orMP3 = false;
 
   upload.array('myfile', 3)(req, res, async err => {
@@ -345,7 +345,7 @@ app.post('/guifile', checkArranging, (req, res) => {
 });
 
 // ==================== ESP ====================
-app.post('/esp_sending', (req, res) => {
+app.post('/esp_sending', yeuCauDangNhap, checkArranging, (req, res) => {
   const { nhietdo, doam } = req.body;
 
   if (nhietdo == null || doam == null)
@@ -360,7 +360,7 @@ app.post('/esp_sending', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/dataesp', (req, res) => {
+app.get('/dataesp', yeuCauDangNhap, checkArranging, (req, res) => {
   res.json({
     trangthai: trangThaiESPJson,
     duLieu: duLieuJsonESP,
@@ -369,7 +369,7 @@ app.get('/dataesp', (req, res) => {
 });
 
 // ==================== VIDEO SHORT và SONGLIST ====================
-app.get('/layvideoshort', checkArranging, (req, res) => {
+app.get('/layvideoshort', yeuCauDangNhap, checkArranging, (req, res) => {
   const files = fs.readdirSync(finalUploadDir)
     .filter(f => f.endsWith('.mp4'))
     .map(f => `/videoshort/${encodeURIComponent(f)}`);
@@ -377,7 +377,7 @@ app.get('/layvideoshort', checkArranging, (req, res) => {
   res.json({ nguonMP4: files });
 });
 
-app.get('/songlist', checkArranging, (req, res) => {
+app.get('/songlist', yeuCauDangNhap, checkArranging, (req, res) => {
   const MP3DIR = path.join(__dirname, '..', 'client', 'clientdata', 'ListMP3');
   const files = fs.readdirSync(MP3DIR)
     .filter(f => f.endsWith('.mp3'))
@@ -386,7 +386,7 @@ app.get('/songlist', checkArranging, (req, res) => {
   res.json({ nguonMP3: files });
 });
 // ==================== TÌM FILE ====================
-app.get('/timfile', checkArranging, (req, res) => {
+app.get('/timfile', yeuCauDangNhap, checkArranging, (req, res) => {
   const ext = req.query.ext.toLowerCase();
   const files = fs.readdirSync(finalUploadDir).filter(f => f.toLowerCase().endsWith(ext)).map(f => `/download/${encodeURIComponent(f)}`);
   if (files.length === 0) {

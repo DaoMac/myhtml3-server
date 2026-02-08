@@ -228,10 +228,14 @@ async function capNhatNut(idNut) {
 async function layDanhSachBaiHat() {
   try {
     const res = await fetch('/songlist');
+    if (res.status === 503) {
+      alert('⏳ Máy chủ đang sắp xếp lại danh sách nhạc, vui lòng đợi trong giây lát!');
+      return [];
+    }
     if (!res.ok) throw new Error('❌ Không thể lấy danh sách bài hát!');  // throw Error là hàm tạo lỗi khi có đk 
-    const data = await res.json();
-    songList = data.nguonMP3;
-    return songList;
+      const data = await res.json();
+      songList = data.nguonMP3;
+      return songList;
   } catch (err) {
     console.error('⚠️ Lỗi khi lấy danh sách bài hát:', err);
     return [];
@@ -241,6 +245,10 @@ async function layDanhSachBaiHat() {
 async function laysoursevideoshort() {
   try {
     const res = await fetch('/layvideoshort');
+    if (res.status === 503) {
+      console.warn('Máy chủ đang bận sắp xếp video...');
+      return [];
+    }
     if (!res.ok) throw new Error('Không thể lấy short video!');
     const data = await res.json();
     danhsachShortvideo = data.nguonMP4;
