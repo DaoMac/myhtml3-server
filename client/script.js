@@ -228,6 +228,9 @@ async function capNhatNut(idNut) {
 async function layDanhSachBaiHat() {
   try {
     const res = await fetch('/songlist');
+    if (res.status === 503) {
+      throw new Error('❌ Không thể lấy danh sách bài hát do máy chủ đang bận');
+    }
     if (!res.ok) throw new Error('❌ Không thể lấy danh sách bài hát!');  // throw Error là hàm tạo lỗi khi có đk 
     const data = await res.json();
     songList = data.nguonMP3;
@@ -241,6 +244,9 @@ async function layDanhSachBaiHat() {
 async function laysoursevideoshort() {
   try {
     const res = await fetch('/layvideoshort');
+    if (res.status === 503) {
+      throw new Error('Không thể lấy short video do máy chủ đang bận');
+    }
     if (!res.ok) throw new Error('Không thể lấy short video!');
     const data = await res.json();
     danhsachShortvideo = data.nguonMP4;

@@ -255,7 +255,7 @@ app.get('/', yeuCauDangNhap, (req, res) => {
 });
 
 // ==================== DOWNLOAD ====================
-app.get('/download/:filename', checkArranging, (req, res) => {
+app.get('/download/:filename', yeuCauDangNhap, checkArranging, (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(finalUploadDir, filename);
 
@@ -307,7 +307,7 @@ app.get('/download/:filename', checkArranging, (req, res) => {
 });
 
 // ==================== UPLOAD ====================
-app.post('/guifile', checkArranging, (req, res) => {
+app.post('/guifile',yeuCauDangNhap, checkArranging, (req, res) => {
   let IsNewMP4orMP3 = false;
 
   upload.array('myfile', 3)(req, res, async err => {
@@ -345,7 +345,7 @@ app.post('/guifile', checkArranging, (req, res) => {
 });
 
 // ==================== ESP ====================
-app.post('/esp_sending', (req, res) => {
+app.post('/esp_sending',yeuCauDangNhap,checkArranging, (req, res) => {
   const { nhietdo, doam } = req.body;
 
   if (nhietdo == null || doam == null)
@@ -369,7 +369,7 @@ app.get('/dataesp', (req, res) => {
 });
 
 // ==================== VIDEO SHORT và SONGLIST ====================
-app.get('/layvideoshort', checkArranging, (req, res) => {
+app.get('/layvideoshort',yeuCauDangNhap, checkArranging, (req, res) => {
   const files = fs.readdirSync(finalUploadDir)
     .filter(f => f.endsWith('.mp4'))
     .map(f => `/videoshort/${encodeURIComponent(f)}`);
@@ -377,7 +377,7 @@ app.get('/layvideoshort', checkArranging, (req, res) => {
   res.json({ nguonMP4: files });
 });
 
-app.get('/songlist', checkArranging, (req, res) => {
+app.get('/songlist',yeuCauDangNhap, checkArranging, (req, res) => {
   const MP3DIR = path.join(__dirname, '..', 'client', 'clientdata', 'ListMP3');
   const files = fs.readdirSync(MP3DIR)
     .filter(f => f.endsWith('.mp3'))
@@ -386,7 +386,7 @@ app.get('/songlist', checkArranging, (req, res) => {
   res.json({ nguonMP3: files });
 });
 // ==================== TÌM FILE ====================
-app.get('/timfile', checkArranging, (req, res) => {
+app.get('/timfile',yeuCauDangNhap, checkArranging, (req, res) => {
   const ext = req.query.ext.toLowerCase();
   const files = fs.readdirSync(finalUploadDir).filter(f => f.toLowerCase().endsWith(ext)).map(f => `/download/${encodeURIComponent(f)}`);
   if (files.length === 0) {
