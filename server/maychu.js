@@ -162,8 +162,9 @@ app.use(session({
   saveUninitialized: true,
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // Đăng nhập có hiệu lực 1 ngày
 }));
+app.use(express.static(path.join(__dirname, '..', 'clientlogin')));
 app.use(yeuCauDangNhap ,express.static(path.join(__dirname, '..', 'client')));
-app.use('/videoshort',yeuCauDangNhap, checkArranging, express.static(finalUploadDir)); //không cho lấy video short khi đg sắp xếp
+app.use('/videoshort',yeuCauDangNhap, checkArranging, express.static(finalUploadDir)); 
 
 // ==================== BIẾN ESP ====================
 let duLieuJsonESP = {};
@@ -182,9 +183,13 @@ function removeQuarantine(name) {
 }
 
 // ==================== ROUTES ====================
+app.get('/', yeuCauDangNhap, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'client', 'GETinteractive.html'));
+});
+
 // 5. Các Routes mới
 app.get('/dangnhap', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'dangnhap.html'));
+  res.sendFile(path.join(__dirname, '..', 'clientlogin', 'dangnhap.html'));
 });
 
 app.post('/xuly-dangnhap', (req, res) => {
@@ -195,7 +200,7 @@ app.post('/xuly-dangnhap', (req, res) => {
     req.session.daDangNhap = true;
     req.session.username = username;
     req.session.loginTime = new Date();
-    req.session.clientIP = req.ip || req.connection.remoteAddress || 'Unknown';
+    req.session.clientIP = req.ip || req.socket.remoteAddress || 'Unknown';
     console.log(`✅ ${username} đăng nhập từ ${req.session.clientIP}`);
     return res.json({ success: true });
   } else {
@@ -214,7 +219,7 @@ app.get('/get-user-info', yeuCauDangNhap, (req, res) => {
 
 // Lấy IP của client
 app.get('/get-client-ip', yeuCauDangNhap, (req, res) => {
-  const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 'Unknown';
+  const clientIP = req.ip || req.socket.remoteAddress || 'Unknown';
   res.json({ ip: clientIP });
 });
 
@@ -247,10 +252,6 @@ app.get('/dangxuat', (req, res) => {
   console.log(`🔓 ${username} đăng xuất`);
   req.session.destroy();
   res.redirect('/dangnhap');
-});
-
-app.get('/', yeuCauDangNhap, (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'GETinteractive.html'));
 });
 
 // ==================== DOWNLOAD ====================
