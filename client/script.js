@@ -38,7 +38,6 @@ let touchStartY = 0;
 let touchEndY = 0;
 let refreshingsong = false;
 let okrefresh = true;
-let baimodau = 'clientdata/ListMP3/Through the Silent Frostbound Night 6.0 OST.mp3';
 let napbaimodau = false;
 
 // ============================================================================
@@ -256,7 +255,46 @@ async function laysoursevideoshort() {
     return[];
   }
 }
+// hàm lấy bài mở đầu
+function laybaimodau(tenCanTim) {
+  // Dùng .find() để tìm phần tử đầu tiên trong songList có chứa tên đó
+  const pathbaidautien = songList.find(path => {
+    const tenFile = decodeURIComponent(path).split('/').pop();
+    return tenFile.includes(tenCanTim);// true thì find() dừng false thì tiếp tục tìm
+  });
 
+  if (pathbaidautien) { // mảng có chứa gì đó thì sẽ bị ép sang bool và mang giá trị true
+    songIndex = songList.indexOf(pathbaidautien);
+  } else {
+    console.warn("⚠️ Không tìm thấy bài mở đầu, mặc định chọn bài 0");
+    songIndex = Math.floor(Math.random() * (songList.length-1));
+  }
+
+    sound = new Audio(songList[songIndex]);
+
+    sound.addEventListener('loadedmetadata', () => {
+      tongthoigian = sound.duration;
+      fulltimemp3.textContent = formatTime(tongthoigian);
+      const name = decodeURIComponent(pathbaidautien).split('/').pop().replace('.mp3', '');
+      document.getElementById('tenbai-text').textContent = name;
+      setTimeout(layvitrichaychu, 150);
+    }, {once:true});
+
+    sound.addEventListener('timeupdate', () => {
+    daphatduoc = sound.currentTime;
+    realtimemp3.textContent = formatTime(daphatduoc);
+    if (tongthoigian > 0)
+      thanhtgianmp3.value = (daphatduoc / tongthoigian) * 100;
+    });
+
+    sound.addEventListener('ended', () => {
+    ketthucnhac = true;
+    if (laplai) {
+      sound.currentTime = 0;
+        capNhatNut(3); // phát lại
+    }
+    });
+}
 // ============================================================================
 // 🎬 SỰ KIỆN GIAO DIỆN
 // ============================================================================
@@ -361,31 +399,7 @@ async function playNextShort(direction) {   //dừng audioplayer(nếu đg phát
 window.addEventListener('DOMContentLoaded', async () => {
   const listamthanh = await layDanhSachBaiHat();
   const listshortvideo = await laysoursevideoshort();
-  
-    sound = new Audio(baimodau);
-
-    sound.addEventListener('loadedmetadata', () => {
-      tongthoigian = sound.duration;
-      fulltimemp3.textContent = formatTime(tongthoigian);
-      const name = decodeURIComponent(baimodau).split('/').pop().replace('.mp3', '');
-      document.getElementById('tenbai-text').textContent = name;
-      setTimeout(layvitrichaychu, 150);
-    }, {once:true});
-
-    sound.addEventListener('timeupdate', () => {
-    daphatduoc = sound.currentTime;
-    realtimemp3.textContent = formatTime(daphatduoc);
-    if (tongthoigian > 0)
-      thanhtgianmp3.value = (daphatduoc / tongthoigian) * 100;
-    });
-
-    sound.addEventListener('ended', () => {
-    ketthucnhac = true;
-    if (laplai) {
-      sound.currentTime = 0;
-        capNhatNut(3); // phát lại
-    }
-    });
+  await laybaimodau('Through the Silent Frostbound Night 6.0 OST.mp3');
 
   document.addEventListener('click',async()=>{
     tuongtaclandau = true;

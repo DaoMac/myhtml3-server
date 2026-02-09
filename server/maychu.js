@@ -10,6 +10,28 @@ const sapxepFiles = require('./arrangeFile');
 const portGuard = require('./portGuard');
 const unidecode = require('unidecode'); 
 const session = require('express-session');
+// ==================== FILE TYPE ====================
+let FileType;
+try {
+  FileType = require('file-type');
+} catch {
+  console.error('❌ Cần cài: npm i file-type@16');
+  process.exit(1);
+}
+
+async function validateFileByContent(filePath, ext) {
+  const ft = await FileType.fromFile(filePath);
+  if (!ft) return false;
+
+  const detectedExt = '.' + ft.ext;
+  const base = ft.mime.split('/')[0];
+
+  if (detectedExt === ext) return true;
+  if (ext === '.mp4' && base === 'video') return true;
+  if (ext === '.mp3' && base === 'audio') return true;
+
+  return false;
+}
 const app = express();
 const PORT1 = 3000;
 
@@ -135,40 +157,17 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(portGuard);
 app.use(bandwidthMiddleware);  // Thêm middleware kiểm soát băng thông
 app.use(session({
-  secret: 'chuoi-bi-mat-cua-ban', // Bạn có thể đổi chuỗi này
+  secret: 'hieu-beo', // Bạn có thể đổi chuỗi này
   resave: false,
   saveUninitialized: true,
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // Đăng nhập có hiệu lực 1 ngày
 }));
-app.use(express.static(path.join(__dirname, '..', 'client')));
-app.use('/videoshort', checkArranging, express.static(finalUploadDir)); //không cho lấy video short khi đg sắp xếp
+app.use(yeuCauDangNhap ,express.static(path.join(__dirname, '..', 'client')));
+app.use('/videoshort',yeuCauDangNhap, checkArranging, express.static(finalUploadDir)); //không cho lấy video short khi đg sắp xếp
 
 // ==================== BIẾN ESP ====================
 let duLieuJsonESP = {};
 let trangThaiESPJson = 'offline';
-
-// ==================== FILE TYPE ====================
-let FileType;
-try {
-  FileType = require('file-type');
-} catch {
-  console.error('❌ Cần cài: npm i file-type@16');
-  process.exit(1);
-}
-
-async function validateFileByContent(filePath, ext) {
-  const ft = await FileType.fromFile(filePath);
-  if (!ft) return false;
-
-  const detectedExt = '.' + ft.ext;
-  const base = ft.mime.split('/')[0];
-
-  if (detectedExt === ext) return true;
-  if (ext === '.mp4' && base === 'video') return true;
-  if (ext === '.mp3' && base === 'audio') return true;
-
-  return false;
-}
 
 function moveFromQuarantine(name) {
   fs.renameSync(
