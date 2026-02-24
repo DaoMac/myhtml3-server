@@ -1,43 +1,56 @@
+// downloader.js
 const { exec } = require('child_process');
 const path = require('path');
 
+/**
+ * Ghi chú các khái niệm lạ:
+ * - [Regex]: Cách dùng các ký hiệu đặc biệt để tìm và xóa chữ (ví dụ: /#.*$/ là xóa từ dấu # đến hết).
+ * - [stdout]: Kết quả mà lệnh hệ thống trả về sau khi chạy xong.
+ */
+
 function taiVideoTikTok(url) {
     return new Promise((resolve, reject) => {
-        // 1. Lấy thời gian (Oppo A71)
-        const now = new Date();
-        const ngay = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
-        const gio = `${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}`;
-        const prefix = `day ${ngay} at ${gio}`;
+        
+        const GIOI_HAN_MB = 50; 
+        const thuMucLuu = path.join(__dirname, 'uploads');
 
-        // 2. Lấy tiêu đề gốc
-        const getTitleCmd = `yt-dlp --get-filename -o "%(title)s" "${url}"`;
+        // BƯỚC 1: HỎI THÔNG TIN FILE (Dung lượng và Tiêu đề)
+        // [API lạ]: --print giúp ta lấy chính xác thông tin cần mà không cần tải file
+        const checkInfoCmd = `yt-dlp --print "%(filesize)s|%(title)s" "${url}"`;
 
-        exec(getTitleCmd, (tErr, tOut) => {
-            let title = tOut ? tOut.trim() : "";
+        exec(checkInfoCmd, (error, stdout) => {
+            if (error) return reject("❌ Không lấy được thông tin video");
 
-            // 3. BỘ LỌC TRIỆT ĐỂ:
-            // - Cắt bỏ từ dấu #
-            // - Loại bỏ các thẻ @User
-            // - CHỈ GIỮ LẠI: Chữ cái (A-Z), Số (0-9), và Tiếng Việt có dấu
-            let cleanName = title
-                .split('#')[0] 
-                .replace(/@\w+/g, '') 
-                // Regex dưới đây giữ lại chữ cái, số và các dải ký tự tiếng Việt
-                .replace(/[^a-zA-Z0-9\sàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/g, '')
-                .replace(/\s+/g, ' ') // Gom nhiều khoảng trắng thành 1
-                .trim();
+            // Tách dung lượng và tiêu đề bằng dấu gạch đứng |
+            const [sizeStr, rawTitle] = stdout.trim().split('|');
+            const sizeInBytes = parseInt(sizeStr);
 
-            // 4. Ghép tên: Nếu có tên thì ghép vào, không thì chỉ lấy day at
-            let finalName = cleanName ? `${prefix} ${cleanName}.mp4` : `${prefix}.mp4`;
+            // KIỂM TRA CÂN NẶNG
+            if (sizeInBytes && sizeInBytes > GIOI_HAN_MB * 1024 * 1024) {
+                return reject(`❌ Video quá nặng (${(sizeInBytes / (1024 * 1024)).toFixed(1)}MB)`);
+            }
+
+            // BƯỚC 2: PHẪU THUẬT TÊN FILE (Xóa từ ký tự lạ đầu tiên)
+            // Ta dùng Regex để tìm các ký tự: #, @, hoặc các ký tự lạ
+            // [Nghĩa]: .split(/[#@]/)[0] nghĩa là: "Gặp dấu # hoặc @ thì lấy phần bên trái thôi"
+            let cleanTitle = rawTitle.split(/[#@]/)[0].trim();
+
+            // Nếu sau khi cắt mà tên bị trống, ta dùng tên mặc định
+            if (!cleanTitle) cleanTitle = "video_tiktok";
+
+            // Tạo tiền tố thời gian (prefix)
+            const now = new Date();
+            const prefix = `day ${now.getDate()}-${now.getMonth() + 1} at ${now.getHours()}_${now.getMinutes()}`;
+
+            // BƯỚC 3: TẢI THỰC TẾ
+            const fileName = `${prefix} [${cleanTitle}].mp4`;
+            const outputPath = path.join(thuMucLuu, fileName);
             
-            const outputPath = path.join(__dirname, 'uploads', finalName);
+            const downloadCmd = `yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" -o "${outputPath}" "${url}"`;
 
-            // 5. Lệnh tải
-            const downloadCommand = `yt-dlp -o "${outputPath}" "${url}"`;
-
-            exec(downloadCommand, (error, stdout, stderr) => {
-                if (error) { reject(error); return; }
-                resolve(stdout);
+            exec(downloadCmd, (dlError) => {
+                if (dlError) return reject("❌ Lỗi khi đang tải");
+                resolve(`✅ Đã tải xong: ${fileName}`);
             });
         });
     });
