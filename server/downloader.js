@@ -3,36 +3,40 @@ const path = require('path');
 
 function taiVideoTikTok(url) {
     return new Promise((resolve, reject) => {
-        // 1. Lấy thời gian hiện tại (Oppo A71)
+        // 1. Lấy thời gian (Oppo A71)
         const now = new Date();
         const ngay = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
         const gio = `${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}`;
         const prefix = `day ${ngay} at ${gio}`;
 
-        // 2. Lấy tên video từ yt-dlp
+        // 2. Lấy tiêu đề gốc
         const getTitleCmd = `yt-dlp --get-filename -o "%(title)s" "${url}"`;
 
         exec(getTitleCmd, (tErr, tOut) => {
-            let originalTitle = tOut ? tOut.trim() : "TikTok_Video";
+            let title = tOut ? tOut.trim() : "";
 
-            // 3. XỬ LÝ TÊN THEO YÊU CẦU:
-            // - Cắt bỏ tất cả ký tự sau dấu #
-            // - Loại bỏ ký tự đặc biệt để tránh lỗi file
-            let cleanTitle = originalTitle.split('#')[0].trim(); 
-            cleanTitle = cleanTitle.replace(/[^\w\s\u00C0-\u1EF9]/gi, ''); // Giữ lại chữ tiếng Việt và số
+            // 3. BỘ LỌC TRIỆT ĐỂ:
+            // - Cắt bỏ từ dấu #
+            // - Loại bỏ các thẻ @User
+            // - CHỈ GIỮ LẠI: Chữ cái (A-Z), Số (0-9), và Tiếng Việt có dấu
+            let cleanName = title
+                .split('#')[0] 
+                .replace(/@\w+/g, '') 
+                // Regex dưới đây giữ lại chữ cái, số và các dải ký tự tiếng Việt
+                .replace(/[^a-zA-Z0-9\sàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/g, '')
+                .replace(/\s+/g, ' ') // Gom nhiều khoảng trắng thành 1
+                .trim();
 
-            // 4. Ghép đúng định dạng: day ... at ... [tên]
-            const finalName = `${prefix} ${cleanTitle}.mp4`;
+            // 4. Ghép tên: Nếu có tên thì ghép vào, không thì chỉ lấy day at
+            let finalName = cleanName ? `${prefix} ${cleanName}.mp4` : `${prefix}.mp4`;
+            
             const outputPath = path.join(__dirname, 'uploads', finalName);
 
-            // 5. Thực hiện tải với tên file đã định dạng
+            // 5. Lệnh tải
             const downloadCommand = `yt-dlp -o "${outputPath}" "${url}"`;
 
             exec(downloadCommand, (error, stdout, stderr) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
+                if (error) { reject(error); return; }
                 resolve(stdout);
             });
         });
