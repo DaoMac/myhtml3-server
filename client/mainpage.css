@@ -2,15 +2,15 @@
    1. THIẾT LẬP CHUNG (BODY & NỀN)
    ========================================= */
 body {
-    color: white;
-    display: flex;
-    margin: 0;
-    padding: 0;
-    justify-content: center;  
-    height: 100vh;     
+    display: grid;
+    /* Hàng 1 (Nav): 8% chiều cao, Hàng 2 (Nội dung): phần còn lại */
+    grid-template-rows: 8vh 1fr;
+    grid-template-columns: 1fr;
+    height: 100vh;
     width: 100vw;
-    overflow: hidden; 
-    background-attachment: fixed;
+    margin: 0;
+    place-items: center; /* Đưa mọi thứ vào giữa ô lưới */
+    overflow: hidden;
 }
 
 *{
@@ -63,13 +63,10 @@ body {
    2. KHUNG CHỨA CHUNG (CONTAINERS)
    ========================================= */
 .container {
-    display: none; position: relative;
+    display: none; grid-row: 2;  grid-column: 1;
     justify-content: center;    align-items: center;
     overflow: hidden;
-    width: auto;   top: 6vh; 
-    min-width: 640px;   
-    max-width: 100vw;
-    height: 94vh;
+    width: 100%;  height: 100%;
     opacity: 0;
     transform: translateY(50px);
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -394,10 +391,9 @@ body {
    6. THANH ĐIỀU HƯỚNG (NAV)
    ========================================= */
 nav {
-    display: inline-block;  align-self: center;
-    position: fixed;   
-    height: 5vh;    max-width: 60vw; min-width: 30vw;   
-    top: 1vh;
+    align-self: center; grid-row: 1;    
+    position: relative;   z-index: 10;
+    max-width: 70vw; min-width: 30vw;   
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;    
     background-color: rgba(127, 255, 212, 0.2);
@@ -419,7 +415,7 @@ nav ul {
 nav ul li {
     display: flex;
     justify-content: space-around;
-    align-items: center;    padding: 0 10px;
+    align-items: center;    padding: 0 10px;    margin: 3% 0;
     font-size: small;      gap: 5px;
     position: relative; 
     border-radius: 20px;
