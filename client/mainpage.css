@@ -67,7 +67,7 @@ body {
     justify-content: center;    align-items: center;
     overflow: hidden;
     width: 100%;  height: 100%;
-    opacity: 0; overflow-y: auto;
+    opacity: 0;
     transform: translateY(50px);
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
@@ -84,8 +84,7 @@ body {
 
 #container-2 {
     align-items: center;     
-    justify-content: space-around;
-    overflow-y: auto; padding-top: 100%;  
+    justify-content: space-around;   
 }
 
 #tuychonfile {
