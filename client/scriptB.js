@@ -6,15 +6,48 @@ const nutTim       = document.getElementById('nut2');
 const inputTim     = document.getElementById('ae2');
 const fileListDiv  = document.getElementById('fileList');
 const downloadBtn  = document.querySelector('.nutdownload');
+const btnTaiTiktok = document.getElementById('btnTaiTiktok');
+const inputTiktok  = document.getElementById('tiktokUrl');
+const statusTiktok = document.getElementById('tiktokStatus');
 
 // Biến trạng thái
 let selectedFile   = null; 
 var moigui         = false;      // Chống spam request
 let cocambienesp   = true;      // Kiểm soát việc gọi API ESP
 
-/* ==========================================================
-   2. CÁC HÀM XỬ LÝ CHÍNH
-   ========================================================== */
+btnTaiTiktok?.addEventListener('click', async () => {
+    const url = inputTiktok.value.trim();
+    if (!url) return alert("Bạn chưa nhập link mà!");
+
+    // Trạng thái chờ
+    btnTaiTiktok.disabled = true;
+    btnTaiTiktok.style.opacity = "0.6";
+    statusTiktok.textContent = "⏳ Máy chủ Oppo đang tải video sạch...";
+
+    try {
+        const res = await fetch('/taivideo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            statusTiktok.textContent = "✅ " + data.success;
+            inputTiktok.value = ""; // Xong thì xóa link
+        } else {
+            statusTiktok.textContent = "❌ " + data.error;
+        }
+    } catch (err) {
+        statusTiktok.textContent = "❌ Lỗi: Server không phản hồi!";
+    } finally {
+        btnTaiTiktok.disabled = false;
+        btnTaiTiktok.style.opacity = "1";
+        // Cập nhật lại icon Lucide nếu cần
+        if(window.lucide) lucide.createIcons();
+    }
+});
 
 /* ==========================================================
    3. LẮNG NGHE SỰ KIỆN (Event Listeners)

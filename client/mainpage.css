@@ -88,6 +88,28 @@ body {
     overflow-y: auto;   
 }
 
+#tuychonfile {
+    display: grid;
+    /* Tự động chia cột: tối thiểu 320px, tối đa chiếm hết chỗ trống */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    width: 95%;
+    max-width: 1200px;
+    padding: 20px;
+    overflow-y: auto; /* Cho phép cuộn bên trong nếu quá nhiều hộp */
+}
+
+/* Hiệu ứng lung linh cho hộp TikTok */
+#tiktok-box {
+    border: 1px solid rgba(0, 242, 234, 0.3);
+    transition: transform 0.3s ease;
+}
+
+#tiktok-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(255, 0, 80, 0.2);
+}
+
 #cover-form {
     display: flex;
     flex-direction: column;

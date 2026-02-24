@@ -10,6 +10,7 @@ const sapxepFiles = require('./arrangeFile');
 const portGuard = require('./portGuard');
 const unidecode = require('unidecode'); 
 const session = require('express-session');
+const { taiVideoTikTok } = require('./downloader');
 
 // ==================== 2. KIỂM TRA THƯ VIỆN FILE-TYPE ====================
 let FileType;
@@ -225,6 +226,23 @@ app.get('/get-storage-usage', yeuCauDangNhap, (req, res) => {
 });
 
 // ==================== 9. CÁC TÍNH NĂNG CHÍNH (UPLOAD/DOWNLOAD/DATA) ====================
+//downloadTiktok
+// Cửa sổ nhận Order từ gia đình
+app.post('/taivideo', yeuCauDangNhap, async (req, res) => {
+    const linkVideo = req.body.url;
+
+    if (!linkVideo) {
+        return res.status(400).json({ error: 'Bạn chưa dán link TikTok mà!' });
+    }
+
+    try {
+        // Gọi anh đầu bếp xử lý
+        await taiVideoTikTok(linkVideo);
+        res.json({ success: 'Đã tải xong!sang trang video short để xem' });
+    } catch (error) {
+        res.status(500).json({ error: 'Lỗi khi tải: ' + error.message });
+    }
+});
 
 // Download File
 app.get('/download/:filename', yeuCauDangNhap, checkArranging, (req, res) => {
