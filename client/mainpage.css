@@ -84,17 +84,19 @@ body {
 
 #container-2 {
     align-items: center;     
-    justify-content: space-around;   
+    justify-content: space-around;
+    box-sizing: border-box;   
 }
 
 #tuychonfile {
-    display: grid;
+    display: grid; 
     /* Tự động chia cột: tối thiểu 320px, tối đa chiếm hết chỗ trống */
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
+    max-height: 90vh;
     width: 95%;
     max-width: 1200px;
-    padding: 20px;
+    margin:20px 0px;
     overflow-y: auto; /* Cho phép cuộn bên trong nếu quá nhiều hộp */
 }
 
