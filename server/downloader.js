@@ -51,6 +51,7 @@ function taiVideoTikTok(url) {
 
             exec(downloadCmd, async(dlError) => {
                 if (dlError) return reject("❌ Lỗi khi đang tải");
+                console.log("✅ Tải xong file thô, bắt đầu gọi định dạng..."); // Log kiểm tra 3
                 try {
                     // [QUAN TRỌNG]: Ngay sau khi tải xong, gọi thợ kiểm định sửa định dạng tại chỗ
                     // Chúng ta dùng chính outputPath làm đường dẫn cũ và mới để nó ghi đè/sửa tại chỗ
