@@ -1,6 +1,7 @@
 // downloader.js
 const { exec } = require('child_process');
 const path = require('path');
+const { arrangeFile } = require('./arrangeFile');
 
 /**
  * Ghi chú các khái niệm lạ:
@@ -48,9 +49,19 @@ function taiVideoTikTok(url) {
             
             const downloadCmd = `yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" -o "${outputPath}" "${url}"`;
 
-            exec(downloadCmd, (dlError) => {
+            exec(downloadCmd, async(dlError) => {
                 if (dlError) return reject("❌ Lỗi khi đang tải");
-                resolve(`✅ Đã tải xong: ${fileName}`);
+                try {
+                    // [QUAN TRỌNG]: Ngay sau khi tải xong, gọi thợ kiểm định sửa định dạng tại chỗ
+                    // Chúng ta dùng chính outputPath làm đường dẫn cũ và mới để nó ghi đè/sửa tại chỗ
+                    await arrangeFile(outputPath, outputPath); 
+        
+                    console.log(`[Hệ thống] Đã định dạng lại video TikTok: ${fileName}`);
+                    resolve(`✅ Đã tải và tối ưu xong: ${fileName}`);
+                } catch (err) {
+                    console.error("Lỗi khi định dạng lại video:", err);
+                    resolve(`✅ Đã tải xong nhưng lỗi định dạng: ${fileName}`);
+                }
             });
         });
     });

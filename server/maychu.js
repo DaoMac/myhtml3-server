@@ -348,13 +348,13 @@ app.get('/timfile', yeuCauDangNhap, checkArranging, (req, res) => {
 });
 
 // ==================== 10. SERVER START & CLEANUP ====================
-// Dọn dẹp định kỳ 30 phút
+// Dọn dẹp định kỳ 2 hours
 setInterval(async () => {
   if (!sapxepFiles.arranging) {
     console.log('--- [Scheduled] Dọn dẹp file trùng lặp ---');
     try { await sapxepFiles.donDepTrungLap(); } catch (err) { console.error(err); }
   }
-}, 30 * 60 * 1000);
+},2 * 60 * 60 * 1000);
 
 // Khởi động
 const server = app.listen(PORT1, '0.0.0.0', () => {

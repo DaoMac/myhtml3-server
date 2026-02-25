@@ -297,11 +297,16 @@ body {
 /* =========================================
    5. PHẦN 3: MUSIC PLAYER (#container-4)
    ========================================= */
+#container-4{
+    overflow-x: auto;
+    overflow-y: none;
+}
+
 #audio-player {
     display: flex;  aspect-ratio: 9/16;
     flex-direction: column;
     position: relative;    
-    border-radius: 20px;
+    border-radius: 1.25rem;
     overflow: hidden;
     background: rgba(0, 0, 0, 0.5); 
     max-width: 90vw;        
@@ -316,13 +321,13 @@ body {
 
 #chucnangUI {
     position: absolute; 
-    bottom: 1%;    width: 100%;   left: 0;
+    bottom: 1rem;    width: 100%;   left: 0;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     z-index: 1;
-    gap: 15px;  
+    gap: 1rem;  
     object-fit: cover;
 }
 
@@ -333,13 +338,13 @@ body {
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
+    border-radius: 1rem;
 }
 
 #buttonaudioplayer button{
     padding: 0;
     margin: 0; 
-    padding: 5% 3%;
+    padding: 0.8rem 0.5rem;
     font-size: large;
 }
 
@@ -369,13 +374,13 @@ body {
     width: 80%;           
     cursor: pointer;
     accent-color: rgba(255, 255, 255, 0.8);
-    height: 7px;
+    height: 0.4rem;
 }
 
 #time-display {
     color: #fff;
     font-family: monospace;
-    font-size: 13px;
+    font-size: 0.8rem;
     text-shadow: 1px 1px 2px #000;
     display: block;
 }
