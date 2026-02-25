@@ -238,6 +238,8 @@ app.post('/taivideo', yeuCauDangNhap, async (req, res) => {
     try {
         // Gọi anh đầu bếp xử lý
         await taiVideoTikTok(linkVideo);
+        console.log("--- Bắt đầu kích hoạt xuLyTatCaFile ---");
+        await sapxepFiles.xuLyTatCaFile();
         res.json({ success: 'Đã tải xong!sang trang video short để xem' });
     } catch (error) {
         res.status(500).json({ error: 'Lỗi khi tải: ' + error.message });
@@ -297,7 +299,7 @@ app.post('/guifile', yeuCauDangNhap, checkArranging, (req, res) => {
       }
       fs.renameSync(f.path, path.join(finalUploadDir, f.filename)); // Di chuyển file
       saved.push(f.filename);
-      if (ext === '.mp4' || ext === '.mp3') IsNewMP4orMP3 = true;
+      if (ext === '.mp4' || ext === '.mp3')  IsNewMP4orMP3 = true;
     }
 
     if (IsNewMP4orMP3 && !sapxepFiles.arranging) sapxepFiles.xuLyTatCaFile().catch(console.error);
