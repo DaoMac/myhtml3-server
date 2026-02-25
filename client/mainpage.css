@@ -8,13 +8,19 @@ body {
     grid-template-columns: 1fr;
     height: 100vh;
     width: 100vw;
-    margin: 0;
+    margin: 0;  font-size: 16px;
     place-items: center; /* Đưa mọi thứ vào giữa ô lưới */
     overflow: hidden;
 }
 
 *{
     box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+    html {
+        font-size: 14px; /* Tất cả đơn vị rem sẽ tự động thu nhỏ 12.5% */
+    }
 }
 
 /* Tùy chỉnh thanh cuộn cho toàn bộ trang và các box */
@@ -92,11 +98,12 @@ body {
     display: grid; 
     /* Tự động chia cột: tối thiểu 320px, tối đa chiếm hết chỗ trống */
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
+    gap: 1.2rem;
     max-height: 90vh;
     width: 95%;
     max-width: 1200px;
-    margin:20px 0px;
+    margin:1rem auto;
+    overflow-x: auto;
     overflow-y: auto; /* Cho phép cuộn bên trong nếu quá nhiều hộp */
 }
 
@@ -115,10 +122,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    max-width: 40vw;
+    max-width: 25rem;
     max-height: 65vh;
     background-color: rgba(255, 255, 255, 0.15); 
-    padding: 5%;  
+    padding: 1.5rem;  
     color: white;
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
@@ -137,8 +144,8 @@ body {
     background-color: rgba(229, 221, 221, 0.1);
     border: 2px solid rgba(186, 118, 118, 0.5);
     border-radius: 20px;
-    font-size: large;
-    padding: 3%;
+    font-size: 1rem;
+    padding: 0.8rem;
     color: rgb(243, 240, 240);
     max-width: 60%;
 }
@@ -270,7 +277,6 @@ body {
     display: flex;  
     justify-content: center;
     align-items: center;
-    aspect-ratio: 9/16;
     min-width: 20%;   
     max-width: 100%;   
     min-height: 40vh; 
